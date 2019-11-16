@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "fr.nodesigner.meaoo.androidsample"
+        applicationId "fr.nodesigner.meaoo.mqtt.androidsample"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -18,9 +18,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':meaoo-client')
+    implementation project(':meaoo-mqtt')
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation "com.github.kittinunf.fuel:fuel-android:$fuelAndroidVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "de.mannodermaus.rxjava2:rxbonjour-platform-android:2.0.0-RC1"
-    implementation "de.mannodermaus.rxjava2:rxbonjour-driver-jmdns:2.0.0-RC1"
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
 }

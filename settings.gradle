@@ -1,1 +1,1 @@
-include ':meaoo-client',':sample', ':meaoo-client-android',':sample-android'
+include ':meaoo-mqtt',':sample-android'

@@ -11,7 +11,7 @@
         android:theme="@style/AppBaseTheme">
 
         <activity
-            android:name="fr.nodesigner.meaoo.androidsample.MainActivity"
+            android:name="fr.nodesigner.meaoo.mqtt.androidsample.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
