@@ -4,13 +4,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
-import kotlinx.android.synthetic.main.path_view_item.view.tvPath
+import kotlinx.android.synthetic.main.path_view_item.view.ivTransport
 import kotlinx.android.synthetic.main.path_view_item.view.tvTime
+import kotlin.math.roundToInt
 
 class PathAdapter(
     private val context: Context,
@@ -34,9 +36,24 @@ class PathAdapter(
         val path = paths[position]
 
         holder.apply {
-            holder.tvPath.text = path.paths.toString()
-            holder.tvTime.text = path.costs.sum().toString()
+            val iconRes = when (path.transport) {
+                Transport.WALK -> R.drawable.ic_walk
+                Transport.SUBWAY -> R.drawable.ic_subway
+                Transport.BIKE -> R.drawable.ic_bike
+                Transport.CAR -> R.drawable.ic_car
+            }
+
+            holder.ivTransport.setImageDrawable(context.getDrawable(iconRes))
+            holder.tvTime.text = formatTime(path.costs.sum())
         }
+    }
+
+    private fun formatTime(time: Double): String {
+        var minutes = time.roundToInt()
+        val hours = minutes / 60
+        minutes %= 60
+
+        return "$hours:$minutes"
     }
 
     data class Path(
@@ -48,7 +65,7 @@ class PathAdapter(
     inner class ViewHolder(view: View, itemClickListener: (Path) -> Unit) :
         RecyclerView.ViewHolder(view) {
 
-        val tvPath: TextView = view.tvPath
+        val ivTransport: ImageView = view.ivTransport
         val tvTime: TextView = view.tvTime
 
         init {
