@@ -71,11 +71,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Singleton.disconnect(false)
-    }
-
     private fun connect() {
         Singleton.setInternalCb(object : IMessageCallback {
 
@@ -97,6 +92,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                         userMissionUpdate(jsonString)
                     }
                     TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
+                    TOPIC.OBJECTIVE_REACHED.path -> objectiveReached(jsonString)
                     else -> Log.v(TAG, "[$topic] $jsonString")
                 }
             }
@@ -160,6 +156,10 @@ class MainActivity : Activity(), MissionExecutor.Listener {
             userSituation = status.userSituation
             userStatus = status.status
         }
+    }
+
+    private fun objectiveReached() {
+        missionExecutor?.onTargetReached()
     }
 
     override fun onStopped() {

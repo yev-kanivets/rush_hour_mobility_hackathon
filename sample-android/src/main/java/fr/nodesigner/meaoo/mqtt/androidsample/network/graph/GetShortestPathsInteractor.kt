@@ -14,8 +14,6 @@ class GetShortestPathsInteractor {
             GraphClient.getShortestPathCar(request).body()
         )
 
-        println(list)
-
         return list.map {
             val input = it.cars.first()
 

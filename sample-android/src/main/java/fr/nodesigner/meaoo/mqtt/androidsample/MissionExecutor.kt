@@ -31,25 +31,18 @@ class MissionExecutor(
     var userStatus: String = "stopped"
         set(value) {
             field = value
-
-            if (userStatus != "stopped") return
-
-            val currentTarget = mission.positions[currentTargetIndex]
-            val distanceToTarget = distance(currentTarget, userSituation.position)
-
-            val isTargetReached = distanceToTarget < EPS && userStatus == "stopped"
-            if (isTargetReached) {
-                currentTargetIndex++
-                val isMissionCompleted = (currentTargetIndex == mission.positions.size)
-                if (isMissionCompleted) {
-                    listener.onMissionCompleted()
-                } else {
-                    listener.onTargetReached()
-                }
-            } else {
-                listener.onStopped()
-            }
+            if (userStatus == "stopped") listener.onStopped()
         }
+
+    fun onTargetReached() {
+        currentTargetIndex++
+        val isMissionCompleted = (currentTargetIndex == mission.positions.size)
+        if (isMissionCompleted) {
+            listener.onMissionCompleted()
+        } else {
+            listener.onTargetReached()
+        }
+    }
 
     private fun distance(a: Coordinate, b: Coordinate): Double {
         return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
