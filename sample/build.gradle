@@ -1,0 +1,18 @@
+apply plugin: 'kotlin'
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+    test.resources.srcDirs = ['src/test/resources']
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+dependencies {
+    implementation project(':meaoo-client')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "com.github.kittinunf.fuel:fuel-gson:$fuelGsonVersion"
+    implementation "de.mannodermaus.rxjava2:rxbonjour-platform-desktop:2.0.0-RC1"
+    implementation "de.mannodermaus.rxjava2:rxbonjour-driver-jmdns:2.0.0-RC1"
+}

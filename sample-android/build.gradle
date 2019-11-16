@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "fr.nodesigner.meaoo.androidsample"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "0.2"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':meaoo-client')
+    implementation "com.github.kittinunf.fuel:fuel-android:$fuelAndroidVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "de.mannodermaus.rxjava2:rxbonjour-platform-android:2.0.0-RC1"
+    implementation "de.mannodermaus.rxjava2:rxbonjour-driver-jmdns:2.0.0-RC1"
+}

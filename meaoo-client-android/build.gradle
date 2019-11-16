@@ -1,0 +1,169 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'org.jetbrains.dokka-android'
+apply plugin: 'org.jetbrains.kotlin.android.extensions'
+
+android {
+    compileSdkVersion bboxapiCompileSdkVersion
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion bboxapiCompileSdkVersion
+        versionCode 1
+        versionName projectVersion
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    androidExtensions {
+        experimental = true
+    }
+}
+
+dependencies {
+    implementation "com.github.kittinunf.fuel:fuel-android:$fuelAndroidVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "de.mannodermaus.rxjava2:rxbonjour-platform-android:2.0.0-RC1"
+
+    implementation(project(':meaoo-client')) {
+        exclude group: 'com.github.kittinunf.fuel'
+        exclude module: 'rxbonjour-platform-desktop'
+    }
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion"
+    testImplementation "org.robolectric:robolectric:$roboelectricVersion"
+    testImplementation "de.mannodermaus.rxjava2:rxbonjour-driver-jmdns:2.0.0-RC1"
+}
+
+group = 'fr.nodesigner'
+version = projectVersion
+
+def libName = 'meaoo-client-android'
+
+bintray {
+    user = "$System.env.BINTRAY_USER"
+    key = "$System.env.BINTRAY_KEY"
+
+    configurations = ['archives']
+
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+
+    pkg {
+        repo = 'maven'
+        name = libName
+        desc = projectDescription
+        websiteUrl = projectSite
+        issueTrackerUrl = projectIssueTracker
+        vcsUrl = projectRepo
+        licenses = projectLicenses
+        labels = projectLabels
+        publicDownloadNumbers = true
+
+        version {
+            name = projectVersion
+            vcsTag = projectVersion
+
+            gpg {
+                sign = true
+                passphrase = "$System.env.GPG_PASSPHRASE"
+            }
+
+            mavenCentralSync {
+                sync = true
+                //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = "$System.env.MAVEN_CENTRAL_USER_TOKEN" //OSS user token
+                password = "$System.env.MAVEN_CENTRAL_PASSWORD" //OSS user password
+                close = '1'
+                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                description projectDescription
+                packaging 'aar'
+                name libName
+                url projectSite
+                licenses {
+                    license {
+                        name projectLicense
+                        url projectLicensePath
+                    }
+                }
+                developers {
+                    developer {
+                        id 'bertrandmartel'
+                        name 'Bertrand Martel'
+                        email 'bmartel.fr@gmail.com'
+                    }
+                }
+                scm {
+                    connection projectRepo
+                    developerConnection projectRepo
+                    url projectSite
+                }
+            }
+            whenConfigured {
+                p ->
+                    p.dependencies = p.dependencies.findAll {
+                        dep -> (dep.artifactId.notIn(["junit", "mockwebserver", "jsonassert","rxbonjour-driver-jmdns","robolectric","mockito-kotlin"]))
+                    }
+            }
+        }
+    }
+}
+
+Object.metaClass.notIn = { Object collection ->
+    !(delegate in collection)
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc, dependsOn: dokka) {
+
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+    kotlinTasks { [] } // Disable Kotlin-Android based autoconfiguration
+    sourceDirs = project.files('src/main/kotlin')
+    classpath = new ArrayList<File>(project.tasks['assemble'].outputs.files.files)
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
