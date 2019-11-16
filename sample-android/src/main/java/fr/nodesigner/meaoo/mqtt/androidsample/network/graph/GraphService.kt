@@ -1,4 +1,4 @@
-package fr.nodesigner.meaoo.mqtt.androidsample.network
+package fr.nodesigner.meaoo.mqtt.androidsample.network.graph
 
 import com.google.gson.annotations.SerializedName
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate

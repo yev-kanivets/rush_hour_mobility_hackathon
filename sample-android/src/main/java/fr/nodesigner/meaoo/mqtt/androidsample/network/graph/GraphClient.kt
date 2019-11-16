@@ -1,4 +1,4 @@
-package fr.nodesigner.meaoo.mqtt.androidsample.network
+package fr.nodesigner.meaoo.mqtt.androidsample.network.graph
 
 import com.google.gson.GsonBuilder
 import fr.nodesigner.meaoo.mqtt.android.GRAPH_URL

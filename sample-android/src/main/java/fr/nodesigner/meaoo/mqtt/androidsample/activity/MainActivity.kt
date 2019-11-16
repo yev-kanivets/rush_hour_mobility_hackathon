@@ -17,8 +17,8 @@ import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
-import fr.nodesigner.meaoo.mqtt.androidsample.network.GetShortestPathsInteractor
-import fr.nodesigner.meaoo.mqtt.androidsample.network.GraphService
+import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetShortestPathsInteractor
+import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +45,11 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
+        initRecycler()
+        connect()
+    }
+
+    private fun initRecycler() {
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         adapter = PathAdapter(this@MainActivity) { selectedPath ->
             val vehicleType = selectedPath.transport.string
@@ -54,7 +59,23 @@ class MainActivity : Activity(), MissionExecutor.Listener {
             adapter.paths = listOf()
         }
         recyclerView.adapter = adapter
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                MISSION_REQUEST -> presentOptionsToUser()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Singleton.disconnect(false)
+    }
+
+    private fun connect() {
         Singleton.setInternalCb(object : IMessageCallback {
 
             override fun connectionLost(cause: Throwable) {
@@ -104,24 +125,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                 Log.v(TAG, "onDisconnectionFailure")
             }
         })
-        connect()
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                MISSION_REQUEST -> presentOptionsToUser()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Singleton.disconnect(false)
-    }
-
-    private fun connect() {
         Singleton.setupApplication(applicationContext, false, true)
         Singleton.connect()
     }
