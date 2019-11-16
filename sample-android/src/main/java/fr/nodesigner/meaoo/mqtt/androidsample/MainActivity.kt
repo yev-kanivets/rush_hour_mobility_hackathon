@@ -100,8 +100,12 @@ class MainActivity : Activity() {
 
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
-        missionExecutor = MissionExecutor(mission)
-        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.nextTarget))
+        missionExecutor = MissionExecutor(mission) { presentOptionsToUser() }
+        presentOptionsToUser()
+    }
+
+    private fun presentOptionsToUser() {
+        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
     }
 
     private fun userStatusUpdate(jsonString: String) {
