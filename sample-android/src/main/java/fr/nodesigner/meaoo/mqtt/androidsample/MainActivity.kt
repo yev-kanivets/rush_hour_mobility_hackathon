@@ -10,7 +10,9 @@ import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
 import fr.nodesigner.meaoo.mqtt.android.model.Path
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import kotlinx.android.synthetic.main.main_activity.tvPosition
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
@@ -45,7 +47,8 @@ class MainActivity : Activity() {
                     TOPIC.USER_MISSION.path, TOPIC.USER_MISSION_DEV.path -> {
                         userMissionUpdate(jsonString)
                     }
-                    else -> Log.v(TAG, jsonString)
+                    TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
+                    else -> Log.v(TAG, "[$topic] $jsonString")
                 }
             }
 
@@ -96,12 +99,16 @@ class MainActivity : Activity() {
     }
 
     private fun userMissionUpdate(jsonString: String) {
-        try {
-            val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
-            missionExecutor = MissionExecutor(mission)
-            Singleton.publishAgentPath(Path("walk", missionExecutor?.nextTarget))
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+        val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
+        missionExecutor = MissionExecutor(mission)
+        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.nextTarget))
+    }
+
+    private fun userStatusUpdate(jsonString: String) {
+        val status = gson.fromJson<UserStatus>(jsonString, UserStatus::class.java)
+        missionExecutor?.apply {
+            userSituation = status.userSituation
+            userStatus = status.status
         }
     }
 }

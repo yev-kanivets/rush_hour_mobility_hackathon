@@ -18,7 +18,9 @@ enum class TOPIC(val path: String) {
 
     USER_SITUATION("$TOPIC_PREFIX/prod/user/situation"),
     USER_MISSION("$TOPIC_PREFIX/prod/user/mission"),
-    USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission")
+    USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission"),
+    USER_STATUS("$TOPIC_PREFIX/prod/user/status"),
+    OBJECTIVE_REACHED("$TOPIC_PREFIX/prod/user/objective-reached")
 }
 
 
@@ -320,23 +322,6 @@ class MqttHandler(context: Context) {
     }
 
     /**
-     * AGENT​ SUBSCRIPTION
-        Solace bus address
-        [TOPIC_PREFIX]/prod/user/situation​
-        [TOPIC_PREFIX]/prod/user/mission
-        [TOPIC_PREFIX]/prod/user/objective-reached
-        [TOPIC_PREFIX]/prod/user/status
-     */
-    fun subscribeAgentObjectiveReached() {
-        val topic = TOPIC_PREFIX + "/prod/user/objective-reached"
-        subscribe(topic, mQosDefault, null)
-    }
-    fun subscribeAgentStatus() {
-        val topic = TOPIC_PREFIX + "/prod/user/status"
-        subscribe(topic, mQosDefault, null)
-    }
-
-    /**
      * CONTEXT​ SUBSCRIPTION
         Solace bus address
         [TOPIC_PREFIX]/prod/context/change/weather
@@ -394,32 +379,6 @@ class MqttHandler(context: Context) {
      */
     fun publishAgentPath(message: String, isRetained: Boolean = true, qos: QosPolicy = mQosDefault, completionListener: IMqttActionListener): IMqttDeliveryToken? {
         val topic = "$TOPIC_PREFIX/prod/user/path"
-        return publishMessage(topic, message, isRetained, qos, completionListener)
-    }
-
-    /**
-     *  CITY COMMAND
-        Solace bus address
-        [TOPIC_PREFIX]/prod/city/reset (*)
-        [TOPIC_PREFIX]/prod/city/morph/traffic_conditions (*)
-        [TOPIC_PREFIX]/prod/city/morph/lines_state (*)
-        [TOPIC_PREFIX]/prod/city/morph/roads_status (*)
-         * = DEV env​
-     */
-    fun publishCityReset(message: String, isRetained: Boolean = true, qos: QosPolicy = mQosDefault, completionListener: IMqttActionListener): IMqttDeliveryToken? {
-        val topic = "$TOPIC_PREFIX/prod/city/reset"
-        return publishMessage(topic, message, isRetained, qos, completionListener)
-    }
-    fun publishCityTrafficConditions(message: String, isRetained: Boolean, qos: QosPolicy, completionListener: IMqttActionListener): IMqttDeliveryToken? {
-        val topic = "$TOPIC_PREFIX/prod/city/morph/traffic_conditions"
-        return publishMessage(topic, message, isRetained, qos, completionListener)
-    }
-    fun publishCityLinesState(message: String, isRetained: Boolean, qos: QosPolicy, completionListener: IMqttActionListener): IMqttDeliveryToken? {
-        val topic = "$TOPIC_PREFIX/prod/city/morph/lines_state"
-        return publishMessage(topic, message, isRetained, qos, completionListener)
-    }
-    fun publishCityRoadStatus(message: String, isRetained: Boolean, qos: QosPolicy, completionListener: IMqttActionListener): IMqttDeliveryToken? {
-        val topic = "$TOPIC_PREFIX//prod/city/morph/roads_status"
         return publishMessage(topic, message, isRetained, qos, completionListener)
     }
 }
