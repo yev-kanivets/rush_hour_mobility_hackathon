@@ -6,47 +6,53 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-
-  <LinearLayout
+  <ScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:gravity="center_horizontal"
-      android:orientation="vertical"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
       >
 
-    <TextView
-        android:id="@+id/textView1"
-        style="@style/mission_header_style"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
-    <Button
-        android:id="@+id/button1"
-        style="@style/mission_button_style"
-        />
+      <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:src="@drawable/mission_header"
+          />
 
-    <Button
-        android:id="@+id/button2"
-        style="@style/mission_button_style"
-        android:text="@string/mission_button2_text"
-        />
+      <TextView
+          android:id="@+id/tvMission"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="16dp"
+          android:gravity="center"
+          android:text="@string/visit_the_following_points"
+          android:textSize="20sp"
+          />
 
-    <Button
-        android:id="@+id/button3"
-        style="@style/mission_button_style"
-        android:text="@string/mission_button3_text"
-        />
+      <LinearLayout
+          android:id="@+id/llTargets"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          />
 
-    <Button
-        android:id="@+id/buttonGo"
-        style="@style/mission_button_go_style"
-        android:text="@string/button_go_name"
-        />
+      <Button
+          android:id="@+id/buttonGo"
+          style="@style/mission_button_go_style"
+          android:text="@string/button_go_name"
+          />
 
-  </LinearLayout>
+    </LinearLayout>
+  </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

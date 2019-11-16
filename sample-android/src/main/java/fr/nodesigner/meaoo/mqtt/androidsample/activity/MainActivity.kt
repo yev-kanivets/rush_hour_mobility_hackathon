@@ -102,11 +102,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     }
 
     private fun connect() {
-        Singleton.setupApplication(
-            applicationContext,
-            false,
-            true
-        )
+        Singleton.setupApplication(applicationContext, false, true)
         Singleton.connect()
     }
 
@@ -121,7 +117,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         missionExecutor = MissionExecutor(mission, this)
-        startActivityForResult(Intent(this, MissionActivity::class.java), MISSION_REQUEST)
+        startActivityForResult(MissionActivity.newIntent(this, mission), MISSION_REQUEST)
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -150,12 +146,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     }
 
     private fun goWalking() {
-        Singleton.publishAgentPath(
-            Path(
-                Transport.WALK.string,
-                missionExecutor?.currentTarget
-            )
-        )
+        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
         btnGo.isEnabled = false
     }
 }

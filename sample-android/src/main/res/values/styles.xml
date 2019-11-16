@@ -10,15 +10,7 @@
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:textColor">@color/color_mission_button_text</item>
-        <item name="android:layout_margin">7dp</item>
-    </style>
-
-    <style name="mission_header_style">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">280dp</item>
-        <item name="android:background">@drawable/mission_header</item>
-        <item name="android:padding">1dp</item>
-        <item name="android:textColor">@color/color_mission_header</item>
+        <item name="android:layout_margin">8dp</item>
     </style>
 
     <style name="mission_button_go_style">
