@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
@@ -16,7 +15,6 @@ import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.GetShortestPathsInteractor
@@ -39,11 +37,23 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private val presenterJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + presenterJob)
 
+    private lateinit var adapter: PathAdapter
+
     private var missionExecutor: MissionExecutor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+
+        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        adapter = PathAdapter(this@MainActivity) { selectedPath ->
+            val vehicleType = selectedPath.transport.string
+            val target = selectedPath.paths.last()
+
+            Singleton.publishAgentPath(Path(vehicleType, target))
+            adapter.paths = listOf()
+        }
+        recyclerView.adapter = adapter
 
         Singleton.setInternalCb(object : IMessageCallback {
 
@@ -157,16 +167,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val request = GraphService.Request(userPosition, targetPosition)
         val getShortestPaths = GetShortestPathsInteractor()
 
-        uiScope.launch {
-            val paths = getShortestPaths.execute(request)
-            recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-            recyclerView.adapter = PathAdapter(this@MainActivity, paths) {
-                goWalking()
-            }
-        }
-    }
-
-    private fun goWalking() {
-        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
+        uiScope.launch { adapter.paths = getShortestPaths.execute(request) }
     }
 }

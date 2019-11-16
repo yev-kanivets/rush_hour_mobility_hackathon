@@ -14,9 +14,14 @@ import kotlinx.android.synthetic.main.path_view_item.view.tvTime
 
 class PathAdapter(
     private val context: Context,
-    private val paths: List<Path>,
-    private val itemClickListener: (Int) -> Unit
+    private val itemClickListener: (Path) -> Unit
 ) : RecyclerView.Adapter<PathAdapter.ViewHolder>() {
+
+    var paths: List<Path> = listOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(context).inflate(R.layout.path_view_item, parent, false)
@@ -40,14 +45,15 @@ class PathAdapter(
         val costs: List<Double>
     )
 
-    class ViewHolder(view: View, itemClickListener: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View, itemClickListener: (Path) -> Unit) :
+        RecyclerView.ViewHolder(view) {
 
         val tvPath: TextView = view.tvPath
         val tvTime: TextView = view.tvTime
 
         init {
             view.setOnClickListener {
-                itemClickListener.invoke(adapterPosition)
+                itemClickListener.invoke(paths[adapterPosition])
             }
         }
     }
