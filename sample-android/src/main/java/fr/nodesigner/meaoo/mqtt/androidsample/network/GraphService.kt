@@ -5,11 +5,15 @@ import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface GraphService {
 
-    @POST("road_graph/shortest_path/subway")
-    suspend fun getShortestPathSubway(@Body body: Request): Response<Result>
+    @POST("road_graph/shortest_path/{vehicle_type}")
+    suspend fun getShortestPath(
+        @Path("vehicle_type") vehicleType: String,
+        @Body body: Request
+    ): Response<Result>
 
     data class Request(
         @SerializedName("departure") val departure: Coordinate,

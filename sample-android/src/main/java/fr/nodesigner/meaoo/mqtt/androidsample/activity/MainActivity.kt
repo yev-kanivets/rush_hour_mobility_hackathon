@@ -159,8 +159,20 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         btnGo.isEnabled = true
 
         uiScope.launch {
+            val shortestPathWalk = GraphClient.getShortestPathWalk(request).body()
             val shortestPathSubway = GraphClient.getShortestPathSubway(request).body()
-            Log.d(TAG, shortestPathSubway.toString())
+            val shortestPathBike = GraphClient.getShortestPathBike(request).body()
+            val shortestPathCar = GraphClient.getShortestPathCar(request).body()
+
+            Log.d(
+                TAG,
+                listOf(
+                    shortestPathWalk,
+                    shortestPathSubway,
+                    shortestPathBike,
+                    shortestPathCar
+                ).toString()
+            )
         }
     }
 

@@ -2,6 +2,7 @@ package fr.nodesigner.meaoo.mqtt.androidsample.network
 
 import com.google.gson.GsonBuilder
 import fr.nodesigner.meaoo.mqtt.android.GRAPH_URL
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,8 +27,17 @@ object GraphClient {
             .build()
     }
 
-    private val codeforcesApi by lazy { retrofit.create(GraphService::class.java) }
+    private val graphService by lazy { retrofit.create(GraphService::class.java) }
+
+    suspend fun getShortestPathWalk(request: GraphService.Request) =
+        graphService.getShortestPath(Transport.WALK.string, request)
 
     suspend fun getShortestPathSubway(request: GraphService.Request) =
-        codeforcesApi.getShortestPathSubway(request)
+        graphService.getShortestPath(Transport.SUBWAY.string, request)
+
+    suspend fun getShortestPathBike(request: GraphService.Request) =
+        graphService.getShortestPath(Transport.BIKE.string, request)
+
+    suspend fun getShortestPathCar(request: GraphService.Request) =
+        graphService.getShortestPath(Transport.CAR.string, request)
 }
