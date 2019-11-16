@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_mission_header">#000000</color>
+    <color name="color_mission_button">#8EBECA</color>
+    <color name="color_mission_button_text">#ffffff</color>
+    <color name="color_mission_button_go">#449CA6</color>
+</resources>

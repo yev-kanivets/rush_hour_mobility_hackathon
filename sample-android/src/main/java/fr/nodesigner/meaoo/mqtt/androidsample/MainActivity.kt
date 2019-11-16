@@ -13,7 +13,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
-import kotlinx.android.synthetic.main.main_activity.tvPosition
+import kotlinx.android.synthetic.main.main_activity.*
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
@@ -95,7 +95,7 @@ class MainActivity : Activity() {
     private fun userSituationUpdate(jsonString: String) {
         val userSituation = gson.fromJson<UserSituation>(jsonString, UserSituation::class.java)
         missionExecutor?.userSituation = userSituation
-        tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
+        button1.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
     }
 
     private fun userMissionUpdate(jsonString: String) {

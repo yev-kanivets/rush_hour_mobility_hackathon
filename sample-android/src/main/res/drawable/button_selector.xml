@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp" />
+
+            <solid android:color="@color/color_mission_button" />
+        </shape>
+    </item>
+    <item android:top="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp" />
+
+            <solid android:color="@color/color_mission_button" />
+        </shape>
+    </item>
+    <item android:bottom="1dp" android:top="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp" />
+
+            <solid android:color="@color/color_mission_button" />
+        </shape>
+    </item>
+</selector>
