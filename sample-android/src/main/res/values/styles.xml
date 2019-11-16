@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light"/>
+
+    <style name="mission_button_style">
+        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:drawableLeft">@drawable/ic_map_marker</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:textColor">@color/color_mission_button_text</item>
+        <item name="android:layout_margin">7dp</item>
+    </style>
+
+    <style name="mission_header_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">280dp</item>
+        <item name="android:background">@drawable/mission_header</item>
+        <item name="android:padding">1dp</item>
+        <item name="android:textColor">@color/color_mission_header</item>
+    </style>
+
+    <style name="mission_button_go_style">
+        <item name="android:layout_width">152dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:background">@drawable/button_go_selector</item>
+        <item name="android:onClick">onClick</item>
+        <item name="android:layout_margin">50dp</item>
+        <item name="android:textColor">@color/color_mission_button_text</item>
+    </style>
 </resources>

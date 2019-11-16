@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Meaoo Sample app</string>
+    <string name="button_go_name">Go</string>
+    <string name="mission_title">Mission</string>
+    <string name="mission_bonjour">Bonjour</string>
+    <string name="mission_bonjour_subtitle">vous allez à</string>
+    <string name="mission_button1_text">X: 0.0, Y: 0.0</string>
+    <string name="mission_button2_text">X: 1.0, Y: 1.0</string>
+    <string name="mission_button3_text">X: 2.0, Y: 2.0</string>
+    <string name="title_activity_main2">Main2Activity</string>
+  <string name="go">Go</string>
 </resources>

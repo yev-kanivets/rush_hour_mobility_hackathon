@@ -1,6 +1,7 @@
-package fr.nodesigner.meaoo.mqtt.androidsample
+package fr.nodesigner.meaoo.mqtt.androidsample.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +10,8 @@ import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
 import fr.nodesigner.meaoo.mqtt.android.model.Path
+import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
+import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
@@ -22,6 +25,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 class MainActivity : Activity(), MissionExecutor.Listener {
 
     val TAG = "Olala"
+    val MISSION_REQUEST = 42
 
     private var missionExecutor: MissionExecutor? = null
 
@@ -83,13 +87,26 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         connect()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                MISSION_REQUEST -> presentOptionsToUser()
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         Singleton.disconnect(false)
     }
 
     private fun connect() {
-        Singleton.setupApplication(applicationContext, false, true)
+        Singleton.setupApplication(
+            applicationContext,
+            false,
+            true
+        )
         Singleton.connect()
     }
 
@@ -104,7 +121,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         missionExecutor = MissionExecutor(mission, this)
-        presentOptionsToUser()
+        startActivityForResult(Intent(this, MissionActivity::class.java), MISSION_REQUEST)
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -133,7 +150,12 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     }
 
     private fun goWalking() {
-        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
+        Singleton.publishAgentPath(
+            Path(
+                Transport.WALK.string,
+                missionExecutor?.currentTarget
+            )
+        )
         btnGo.isEnabled = false
     }
 }
