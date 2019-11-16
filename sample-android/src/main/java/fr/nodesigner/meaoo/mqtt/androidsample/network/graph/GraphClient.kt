@@ -29,6 +29,8 @@ object GraphClient {
 
     private val graphService by lazy { retrofit.create(GraphService::class.java) }
 
+    suspend fun getSubwayGraph() = graphService.getSubwayGraph()
+
     suspend fun getShortestPathWalk(request: GraphService.Request) =
         graphService.getShortestPath(Transport.WALK.string, request)
 

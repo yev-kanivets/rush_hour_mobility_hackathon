@@ -4,10 +4,26 @@ import com.google.gson.annotations.SerializedName
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface GraphService {
+
+    @GET("processed/subway.json")
+    suspend fun getSubwayGraph(): Response<Graph>
+
+    data class Graph(
+        @SerializedName("elements") val departure: Elements
+    )
+
+    data class Elements(
+        @SerializedName("nodes") val departure: List<Node>
+    )
+
+    data class Node(
+        @SerializedName("position") val position: Coordinate
+    )
 
     @POST("road_graph/shortest_path/{vehicle_type}")
     suspend fun getShortestPath(

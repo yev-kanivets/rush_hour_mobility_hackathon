@@ -19,6 +19,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetShortestPathsInteractor
+import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
@@ -92,7 +93,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                         userMissionUpdate(jsonString)
                     }
                     TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
-                    TOPIC.OBJECTIVE_REACHED.path -> objectiveReached(jsonString)
+                    TOPIC.OBJECTIVE_REACHED.path -> objectiveReached()
                     else -> Log.v(TAG, "[$topic] $jsonString")
                 }
             }
@@ -143,7 +144,10 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         uiScope.launch {
             val userSituation = ApiClient.getLastUserSituation().body()!!
-            missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
+            val subwayGraph = GraphClient.getSubwayGraph().body()!!
+
+            missionExecutor =
+                MissionExecutor(userSituation, subwayGraph, mission, this@MainActivity)
             drawUserSituation(userSituation)
             val intent = MissionActivity.newIntent(this@MainActivity, mission)
             startActivityForResult(intent, MISSION_REQUEST)
