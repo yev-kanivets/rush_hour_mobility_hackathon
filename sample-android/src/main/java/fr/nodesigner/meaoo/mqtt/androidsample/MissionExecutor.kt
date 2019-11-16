@@ -8,8 +8,17 @@ import kotlin.math.sqrt
 
 class MissionExecutor(
     private val mission: Mission,
-    private val onTargetReached: (Boolean) -> Unit
+    private val listener: Listener
 ) {
+
+    interface Listener {
+
+        fun onStopped()
+
+        fun onTargetReached()
+
+        fun onMissionCompleted()
+    }
 
     private val EPS = 0.1
 
@@ -30,6 +39,8 @@ class MissionExecutor(
         set(value) {
             field = value
 
+            if (userStatus != "stopped") return
+
             val currentTarget = mission.positions[currentTargetIndex]
             val distanceToTarget = distance(currentTarget, userSituation.position)
 
@@ -37,7 +48,13 @@ class MissionExecutor(
             if (isTargetReached) {
                 currentTargetIndex++
                 val isMissionCompleted = (currentTargetIndex == mission.positions.size)
-                onTargetReached(isMissionCompleted)
+                if (isMissionCompleted) {
+                    listener.onMissionCompleted()
+                } else {
+                    listener.onTargetReached()
+                }
+            } else {
+                listener.onStopped()
             }
         }
 

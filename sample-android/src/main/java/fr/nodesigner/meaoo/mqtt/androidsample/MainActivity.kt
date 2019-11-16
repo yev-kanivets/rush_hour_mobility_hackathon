@@ -13,12 +13,13 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
+import kotlinx.android.synthetic.main.main_activity.btnGo
 import kotlinx.android.synthetic.main.main_activity.tvPosition
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), MissionExecutor.Listener {
 
     val TAG = "Olala"
 
@@ -27,6 +28,8 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+
+        btnGo.setOnClickListener { goWalking() }
 
         Singleton.setInternalCb(object : IMessageCallback {
 
@@ -100,12 +103,8 @@ class MainActivity : Activity() {
 
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
-        missionExecutor = MissionExecutor(mission) { presentOptionsToUser() }
+        missionExecutor = MissionExecutor(mission, this)
         presentOptionsToUser()
-    }
-
-    private fun presentOptionsToUser() {
-        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -114,5 +113,27 @@ class MainActivity : Activity() {
             userSituation = status.userSituation
             userStatus = status.status
         }
+    }
+
+    override fun onStopped() {
+        presentOptionsToUser()
+    }
+
+    override fun onTargetReached() {
+        presentOptionsToUser()
+    }
+
+    override fun onMissionCompleted() {
+        missionExecutor = null
+        btnGo.isEnabled = false
+    }
+
+    private fun presentOptionsToUser() {
+        btnGo.isEnabled = true
+    }
+
+    private fun goWalking() {
+        Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
+        btnGo.isEnabled = false
     }
 }
