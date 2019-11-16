@@ -17,6 +17,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
+import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetShortestPathsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
@@ -135,13 +136,22 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun userSituationUpdate(jsonString: String) {
         val userSituation = gson.fromJson<UserSituation>(jsonString, UserSituation::class.java)
         missionExecutor?.userSituation = userSituation
+        drawUserSituation(userSituation)
+    }
+
+    private fun drawUserSituation(userSituation: UserSituation) {
         tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
     }
 
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
-        missionExecutor = MissionExecutor(mission, this)
-        startActivityForResult(MissionActivity.newIntent(this, mission), MISSION_REQUEST)
+        uiScope.launch {
+            val userSituation = ApiClient.getLastUserSituation().body()!!
+            missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
+            drawUserSituation(userSituation)
+            val intent = MissionActivity.newIntent(this@MainActivity, mission)
+            startActivityForResult(intent, MISSION_REQUEST)
+        }
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -171,6 +181,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val request = GraphService.Request(userPosition, targetPosition)
         val getShortestPaths = GetShortestPathsInteractor()
 
-        uiScope.launch { adapter.paths = getShortestPaths.execute(request) }
+        uiScope.launch {
+            adapter.paths = getShortestPaths.execute(request)
+        }
     }
 }

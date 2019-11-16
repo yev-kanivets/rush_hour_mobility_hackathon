@@ -2,11 +2,11 @@ package fr.nodesigner.meaoo.mqtt.androidsample
 
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import kotlin.math.sqrt
 
 class MissionExecutor(
+    var userSituation: UserSituation,
     private val mission: Mission,
     private val listener: Listener
 ) {
@@ -27,13 +27,6 @@ class MissionExecutor(
 
     val currentTarget: Coordinate
         get() = mission.positions[currentTargetIndex]
-
-    var userSituation: UserSituation = UserSituation(
-        Transport.WALK.string,
-        Coordinate(0.0, 0.0),
-        0.0,
-        0.0
-    )
 
     var userStatus: String = "stopped"
         set(value) {
