@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import fr.nodesigner.meaoo.mqtt.android.MqttHandler
+import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
 import fr.nodesigner.meaoo.mqtt.android.model.Path
 import fr.nodesigner.meaoo.mqtt.android.model.Teleport
@@ -15,10 +16,6 @@ import java.util.concurrent.TimeUnit
 object Singleton {
 
     private val TAG = Singleton::class.java.simpleName
-
-    private var mInstance: Singleton? = null
-
-    lateinit var mContext: Context
 
     /**
      * IoT Foundation Application Handler
@@ -59,8 +56,7 @@ object Singleton {
      * @param useSSL        define if SSL is used or plain HTTP
      * @param reconnectAuto define if app will reconnect if connection is lost
      */
-    fun setupApplication(useSSL: Boolean, autoReconnect: Boolean) {
-
+    fun setupApplication(context: Context, useSSL: Boolean, autoReconnect: Boolean) {
         this.reconnectAuto = autoReconnect
 
         disconnect(false)
@@ -68,7 +64,7 @@ object Singleton {
             mHandler?.removeCallback(mIotCallback!!)
         }
 
-        mHandler = MqttHandler(mContext)
+        mHandler = MqttHandler(context)
 
         mIotCallback = object : IMessageCallback {
             override fun connectionLost(cause: Throwable) {
@@ -81,12 +77,10 @@ object Singleton {
                     Log.e(TAG, "connection lost : " + cause.message)
                 }
                 if (!exit && reconnectAuto) {
-                    /*
                     scheduler.schedule(Callable<Unit> {
                         Log.i(TAG, "trying to reconnect")
                         mHandler?.connect()
                     }, RECONNECT_INTERVAL.toLong(), TimeUnit.SECONDS)
-                     */
                 } else {
                     Log.i(TAG, "not trying to reconnect")
                 }
@@ -94,9 +88,7 @@ object Singleton {
 
             @Throws(Exception::class)
             override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
-                if (mInternalCb != null)
-                    mInternalCb!!.messageArrived(topic, mqttMessage)
-                // Log.i(TAG, "messageArrived : " + topic + " : " + String(mqttMessage.getPayload()))
+                mInternalCb?.messageArrived(topic, mqttMessage)
             }
 
             override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
@@ -183,7 +175,9 @@ object Singleton {
 
     fun subscribeToAllTopics() {
         mHandler?.apply {
-            subscribeAgentSituation()
+            subscribe(TOPIC.USER_SITUATION.path, mQosDefault, null)
+            subscribe(TOPIC.USER_MISSION.path, mQosDefault, null)
+            subscribe(TOPIC.USER_MISSION_DEV.path, mQosDefault, null)
         }
     }
 

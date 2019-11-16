@@ -9,11 +9,14 @@ import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import kotlinx.android.synthetic.main.main_activity.tvPosition
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
+
+private const val TAG = "Olala"
 
 class MainActivity : Activity() {
 
@@ -21,7 +24,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-        Singleton.mContext = applicationContext
         Singleton.setInternalCb(object : IMessageCallback {
 
             override fun connectionLost(cause: Throwable) {
@@ -35,10 +37,14 @@ class MainActivity : Activity() {
 
             @Throws(Exception::class)
             override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
-                when(topic) {
-                    TOPIC.USER_SITUATION.path -> userSituationUpdate(String(mqttMessage.payload))
+                val jsonString = String(mqttMessage.payload)
+                when (topic) {
+                    TOPIC.USER_SITUATION.path -> userSituationUpdate(jsonString)
+                    TOPIC.USER_MISSION.path, TOPIC.USER_MISSION_DEV.path -> {
+                        userMissionUpdate(jsonString)
+                    }
+                    else -> Log.v(TAG, jsonString)
                 }
-                // Log.v(TAG, "message arrived")
             }
 
             override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
@@ -75,7 +81,7 @@ class MainActivity : Activity() {
     }
 
     private fun connect() {
-        Singleton.setupApplication(false, true)
+        Singleton.setupApplication(applicationContext, false, true)
         Singleton.connect()
     }
 
@@ -84,5 +90,10 @@ class MainActivity : Activity() {
     private fun userSituationUpdate(jsonString: String) {
         val userSituation = gson.fromJson<UserSituation>(jsonString, UserSituation::class.java)
         tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
+    }
+
+    private fun userMissionUpdate(jsonString: String) {
+        val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
+        Log.d(TAG, mission.toString())
     }
 }

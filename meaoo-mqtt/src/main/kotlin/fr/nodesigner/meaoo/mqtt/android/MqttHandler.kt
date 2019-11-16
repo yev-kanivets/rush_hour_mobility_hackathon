@@ -16,7 +16,9 @@ const val TOPIC_PREFIX: String = "team10"
 
 enum class TOPIC(val path: String) {
 
-    USER_SITUATION("$TOPIC_PREFIX/prod/user/situation")
+    USER_SITUATION("$TOPIC_PREFIX/prod/user/situation"),
+    USER_MISSION("$TOPIC_PREFIX/prod/user/mission"),
+    USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission")
 }
 
 
@@ -325,13 +327,6 @@ class MqttHandler(context: Context) {
         [TOPIC_PREFIX]/prod/user/objective-reached
         [TOPIC_PREFIX]/prod/user/status
      */
-    fun subscribeAgentSituation() {
-        subscribe(TOPIC.USER_SITUATION.path, mQosDefault, null)
-    }
-    fun subscribeAgentMission() {
-        val topic = TOPIC_PREFIX + "/prod/user/mission"
-        subscribe(topic, mQosDefault, null)
-    }
     fun subscribeAgentObjectiveReached() {
         val topic = TOPIC_PREFIX + "/prod/user/objective-reached"
         subscribe(topic, mQosDefault, null)

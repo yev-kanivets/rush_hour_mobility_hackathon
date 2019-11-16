@@ -16,8 +16,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="Add User"
-        app:titleTextColor="@color/white"
         />
 
   </com.google.android.material.appbar.AppBarLayout>
