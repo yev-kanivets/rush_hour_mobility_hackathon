@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
@@ -12,13 +14,14 @@ import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
 import fr.nodesigner.meaoo.mqtt.android.model.Path
 import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
+import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
-import fr.nodesigner.meaoo.mqtt.androidsample.network.GraphClient
+import fr.nodesigner.meaoo.mqtt.androidsample.network.GetShortestPathsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.GraphService
-import kotlinx.android.synthetic.main.main_activity.btnGo
+import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,8 +44,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
-        btnGo.setOnClickListener { goWalking() }
 
         Singleton.setInternalCb(object : IMessageCallback {
 
@@ -147,7 +148,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     override fun onMissionCompleted() {
         missionExecutor = null
-        btnGo.isEnabled = false
     }
 
     private fun presentOptionsToUser() {
@@ -155,29 +155,18 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val targetPosition = missionExecutor?.currentTarget ?: return
 
         val request = GraphService.Request(userPosition, targetPosition)
-
-        btnGo.isEnabled = true
+        val getShortestPaths = GetShortestPathsInteractor()
 
         uiScope.launch {
-            val shortestPathWalk = GraphClient.getShortestPathWalk(request).body()
-            val shortestPathSubway = GraphClient.getShortestPathSubway(request).body()
-            val shortestPathBike = GraphClient.getShortestPathBike(request).body()
-            val shortestPathCar = GraphClient.getShortestPathCar(request).body()
-
-            Log.d(
-                TAG,
-                listOf(
-                    shortestPathWalk,
-                    shortestPathSubway,
-                    shortestPathBike,
-                    shortestPathCar
-                ).toString()
-            )
+            val paths = getShortestPaths.execute(request)
+            recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            recyclerView.adapter = PathAdapter(this@MainActivity, paths) {
+                goWalking()
+            }
         }
     }
 
     private fun goWalking() {
         Singleton.publishAgentPath(Path(Transport.WALK.string, missionExecutor?.currentTarget))
-        btnGo.isEnabled = false
     }
 }
