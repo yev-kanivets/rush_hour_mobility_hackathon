@@ -3,27 +3,20 @@ package fr.nodesigner.meaoo.mqtt.androidsample
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.os.Handler
-import com.github.kittinunf.result.Result
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import org.eclipse.paho.client.mqttv3.IMqttToken
-import android.widget.Toast
-import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.MqttMessage
+import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
-import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
-import fr.nodesigner.meaoo.mqtt.android.model.Path
-import fr.nodesigner.meaoo.mqtt.android.model.Teleport
-
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
+import kotlinx.android.synthetic.main.main_activity.tvPosition
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 class MainActivity : Activity() {
-    private lateinit var mHandler: Handler
 
-    private lateinit var mExecutor: ExecutorService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -42,7 +35,10 @@ class MainActivity : Activity() {
 
             @Throws(Exception::class)
             override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
-                Log.v(TAG, "message arrived")
+                when(topic) {
+                    TOPIC.USER_SITUATION.path -> userSituationUpdate(String(mqttMessage.payload))
+                }
+                // Log.v(TAG, "message arrived")
             }
 
             override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
@@ -51,18 +47,12 @@ class MainActivity : Activity() {
 
             override fun onConnectionSuccess(token: IMqttToken) {
                 Toast.makeText(this@MainActivity, "connnected to server", Toast.LENGTH_SHORT).show()
-                val teleport = Teleport(
-                        vehicle_type = "walk",
-                        path = arrayListOf<List<Float>>(arrayListOf(20.9f, 5.6f), arrayListOf(20.9f, 5.6f)),
-                        costs = arrayListOf(0f,0f)
-                )
-                Singleton.publishTeleport(teleport)
+                Singleton.subscribeToAllTopics()
             }
 
             override fun onConnectionFailure(token: IMqttToken, throwable: Throwable) {
-                //display error message
                 var errorMessage = "connection error"
-                if (throwable?.message != null) {
+                if (throwable.message != null) {
                     errorMessage = throwable.message!!
                 }
                 Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()
@@ -79,9 +69,20 @@ class MainActivity : Activity() {
         connect()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Singleton.disconnect(false)
+    }
+
     private fun connect() {
         Singleton.setupApplication(false, true)
         Singleton.connect()
     }
 
+    private val gson = Gson()
+
+    private fun userSituationUpdate(jsonString: String) {
+        val userSituation = gson.fromJson<UserSituation>(jsonString, UserSituation::class.java)
+        tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
+    }
 }

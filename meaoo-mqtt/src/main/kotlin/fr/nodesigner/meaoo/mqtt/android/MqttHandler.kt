@@ -12,7 +12,13 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import java.util.*
 import kotlin.collections.ArrayList
 
-val TOPIC_PREFIX: String = "team10"
+const val TOPIC_PREFIX: String = "team10"
+
+enum class TOPIC(val path: String) {
+
+    USER_SITUATION("$TOPIC_PREFIX/prod/user/situation")
+}
+
 
 /**
  * Generic handler for all handler type
@@ -320,8 +326,7 @@ class MqttHandler(context: Context) {
         [TOPIC_PREFIX]/prod/user/status
      */
     fun subscribeAgentSituation() {
-        val topic = TOPIC_PREFIX + "/prod/user/situation"
-        subscribe(topic, mQosDefault, null)
+        subscribe(TOPIC.USER_SITUATION.path, mQosDefault, null)
     }
     fun subscribeAgentMission() {
         val topic = TOPIC_PREFIX + "/prod/user/mission"

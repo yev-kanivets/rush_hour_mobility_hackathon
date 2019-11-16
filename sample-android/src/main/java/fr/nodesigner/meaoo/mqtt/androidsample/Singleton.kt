@@ -96,7 +96,7 @@ object Singleton {
             override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
                 if (mInternalCb != null)
                     mInternalCb!!.messageArrived(topic, mqttMessage)
-                Log.i(TAG, "messageArrived : " + topic + " : " + String(mqttMessage.getPayload()))
+                // Log.i(TAG, "messageArrived : " + topic + " : " + String(mqttMessage.getPayload()))
             }
 
             override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
@@ -179,6 +179,12 @@ object Singleton {
 
     fun isAutoReconnect(): Boolean {
         return reconnectAuto
+    }
+
+    fun subscribeToAllTopics() {
+        mHandler?.apply {
+            subscribeAgentSituation()
+        }
     }
 
     fun publishAgentPath(path: Path) {
