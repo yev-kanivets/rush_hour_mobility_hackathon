@@ -182,32 +182,7 @@ object Singleton {
     }
 
     fun publishAgentPath(path: Path) {
-        mHandler?.publishAgentPathToTarget(message = Gson().toJson(path), completionListener = object : IMqttActionListener {
-            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                Log.v(TAG, "failure")
-            }
-
-            override fun onSuccess(asyncActionToken: IMqttToken?) {
-                Log.v(TAG, "success : $asyncActionToken")
-            }
-        })
-    }
-
-    fun publishTeleport(teleport: Teleport) {
-        Log.v(TAG, Gson().toJson(teleport))
-        mHandler?.publishAgentPathToTarget(message = Gson().toJson(teleport), completionListener = object : IMqttActionListener {
-            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                Log.v(TAG, "failure")
-            }
-
-            override fun onSuccess(asyncActionToken: IMqttToken?) {
-                Log.v(TAG, "success : $asyncActionToken")
-            }
-        })
-    }
-
-    fun publishCityReset(path: Path) {
-        mHandler?.publishCityReset(message = "", completionListener = object : IMqttActionListener {
+        mHandler?.publishAgentPath(message = Gson().toJson(path), completionListener = object : IMqttActionListener {
             override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                 Log.v(TAG, "failure")
             }

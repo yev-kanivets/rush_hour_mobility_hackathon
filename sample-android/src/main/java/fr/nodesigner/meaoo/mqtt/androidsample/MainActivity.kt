@@ -1,7 +1,6 @@
 package fr.nodesigner.meaoo.mqtt.androidsample
 
 import android.app.Activity
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +8,7 @@ import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
+import fr.nodesigner.meaoo.mqtt.android.model.Path
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import kotlinx.android.synthetic.main.main_activity.tvPosition
@@ -16,9 +16,11 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
-private const val TAG = "Olala"
-
 class MainActivity : Activity() {
+
+    val TAG = "Olala"
+
+    private var missionExecutor: MissionExecutor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,11 +91,17 @@ class MainActivity : Activity() {
 
     private fun userSituationUpdate(jsonString: String) {
         val userSituation = gson.fromJson<UserSituation>(jsonString, UserSituation::class.java)
+        missionExecutor?.userSituation = userSituation
         tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
     }
 
     private fun userMissionUpdate(jsonString: String) {
-        val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
-        Log.d(TAG, mission.toString())
+        try {
+            val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
+            missionExecutor = MissionExecutor(mission)
+            Singleton.publishAgentPath(Path("walk", missionExecutor?.nextTarget))
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 }

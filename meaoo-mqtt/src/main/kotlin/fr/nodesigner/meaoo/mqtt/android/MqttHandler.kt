@@ -396,11 +396,6 @@ class MqttHandler(context: Context) {
         val topic = "$TOPIC_PREFIX/prod/user/path"
         return publishMessage(topic, message, isRetained, qos, completionListener)
     }
-    fun publishAgentPathToTarget(message: String, isRetained: Boolean = true, qos: QosPolicy = mQosDefault, completionListener: IMqttActionListener): IMqttDeliveryToken? {
-        val topic = "$TOPIC_PREFIX/prod/user/path-to-target"
-        return publishMessage(topic, message, isRetained, qos, completionListener)
-    }
-
 
     /**
      *  CITY COMMAND
