@@ -16,8 +16,14 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
+import fr.nodesigner.meaoo.mqtt.androidsample.network.GraphClient
+import fr.nodesigner.meaoo.mqtt.androidsample.network.GraphService
 import kotlinx.android.synthetic.main.main_activity.btnGo
 import kotlinx.android.synthetic.main.main_activity.tvPosition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
@@ -26,6 +32,9 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     val TAG = "Olala"
     val MISSION_REQUEST = 42
+
+    private val presenterJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + presenterJob)
 
     private var missionExecutor: MissionExecutor? = null
 
@@ -142,7 +151,17 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     }
 
     private fun presentOptionsToUser() {
+        val userPosition = missionExecutor?.userSituation?.position ?: return
+        val targetPosition = missionExecutor?.currentTarget ?: return
+
+        val request = GraphService.Request(userPosition, targetPosition)
+
         btnGo.isEnabled = true
+
+        uiScope.launch {
+            val shortestPathSubway = GraphClient.getShortestPathSubway(request).body()
+            Log.d(TAG, shortestPathSubway.toString())
+        }
     }
 
     private fun goWalking() {

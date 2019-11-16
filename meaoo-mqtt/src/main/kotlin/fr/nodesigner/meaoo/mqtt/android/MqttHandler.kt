@@ -12,8 +12,6 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import java.util.*
 import kotlin.collections.ArrayList
 
-const val TOPIC_PREFIX: String = "team10"
-
 enum class TOPIC(val path: String) {
 
     USER_SITUATION("$TOPIC_PREFIX/prod/user/situation"),
@@ -48,12 +46,12 @@ class MqttHandler(context: Context) {
     /**
      * username used for authentication
      */
-    var mUsername: String = "team10"
+    var mUsername: String = USERNAME
 
     /**
      * password used for authentication
      */
-    var mPassword: String = "plnuyfnsus"
+    var mPassword: String = PASSWORD
 
     /**
      * Android context
