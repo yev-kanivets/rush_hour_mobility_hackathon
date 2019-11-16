@@ -3,12 +3,9 @@ package fr.nodesigner.meaoo.mqtt.androidsample
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
-import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
-import kotlin.math.sqrt
 
 class MissionExecutor(
     var userSituation: UserSituation,
-    private val subwayGraph: GraphService.Graph,
     private val mission: Mission,
     private val listener: Listener
 ) {
@@ -21,8 +18,6 @@ class MissionExecutor(
 
         fun onMissionCompleted()
     }
-
-    private val EPS = 0.1
 
     var currentTargetIndex = 0
         private set
@@ -44,9 +39,5 @@ class MissionExecutor(
         } else {
             listener.onTargetReached()
         }
-    }
-
-    private fun distance(a: Coordinate, b: Coordinate): Double {
-        return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
     }
 }

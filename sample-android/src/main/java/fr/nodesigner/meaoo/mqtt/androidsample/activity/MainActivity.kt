@@ -19,7 +19,6 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetShortestPathsInteractor
-import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
@@ -55,7 +54,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         adapter = PathAdapter(this@MainActivity) { selectedPath ->
             val vehicleType = selectedPath.transport.string
-            val target = selectedPath.paths.last()
+            val target = selectedPath.items.last().coordinate
 
             Singleton.publishAgentPath(Path(vehicleType, target))
             adapter.paths = listOf()
@@ -144,10 +143,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         uiScope.launch {
             val userSituation = ApiClient.getLastUserSituation().body()!!
-            val subwayGraph = GraphClient.getSubwayGraph().body()!!
-
-            missionExecutor =
-                MissionExecutor(userSituation, subwayGraph, mission, this@MainActivity)
+            missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
             drawUserSituation(userSituation)
             val intent = MissionActivity.newIntent(this@MainActivity, mission)
             startActivityForResult(intent, MISSION_REQUEST)

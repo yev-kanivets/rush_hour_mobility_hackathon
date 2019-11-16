@@ -44,7 +44,7 @@ class PathAdapter(
             }
 
             holder.ivTransport.setImageDrawable(context.getDrawable(iconRes))
-            holder.tvTime.text = formatTime(path.costs.sum())
+            holder.tvTime.text = formatTime(path.items.sumByDouble { it.cost })
         }
     }
 
@@ -58,8 +58,13 @@ class PathAdapter(
 
     data class Path(
         val transport: Transport,
-        val paths: List<Coordinate>,
-        val costs: List<Double>
+        val items: List<PathItem>
+    )
+
+    data class PathItem(
+        val coordinate: Coordinate,
+        val cost: Double,
+        val type: Transport
     )
 
     inner class ViewHolder(view: View, itemClickListener: (Path) -> Unit) :

@@ -14,11 +14,11 @@ interface GraphService {
     suspend fun getSubwayGraph(): Response<Graph>
 
     data class Graph(
-        @SerializedName("elements") val departure: Elements
+        @SerializedName("elements") val elements: Elements
     )
 
     data class Elements(
-        @SerializedName("nodes") val departure: List<Node>
+        @SerializedName("nodes") val nodes: List<Node>
     )
 
     data class Node(
