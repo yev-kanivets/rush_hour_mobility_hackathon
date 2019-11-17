@@ -67,7 +67,7 @@ object Singleton {
         mHandler = MqttHandler(context)
 
         mIotCallback = object : IMessageCallback {
-            override fun connectionLost(cause: Throwable) {
+            override fun connectionLost(cause: Throwable?) {
                 Log.i(TAG, "connectionLost")
 
                 if (mInternalCb != null)
@@ -110,7 +110,7 @@ object Singleton {
                 //mHandler.subscribeDeviceEvents("+", "+", "+")
             }
 
-            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable) {
+            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable?) {
                 if (mInternalCb != null)
                     mInternalCb!!.onConnectionFailure(token, throwable)
             }
@@ -123,7 +123,7 @@ object Singleton {
                 }
             }
 
-            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable) {
+            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable?) {
                 if (mInternalCb != null)
                     mInternalCb?.onDisconnectionFailure(token, throwable)
             }

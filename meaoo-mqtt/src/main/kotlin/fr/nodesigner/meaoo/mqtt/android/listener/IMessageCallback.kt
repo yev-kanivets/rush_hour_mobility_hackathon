@@ -16,7 +16,7 @@ interface IMessageCallback {
      *
      * @param cause the reason behind the loss of connection.
      */
-    fun connectionLost(cause: Throwable)
+    fun connectionLost(cause: Throwable?)
 
     /**
      * This method is called when a message arrives from the server.
@@ -48,7 +48,7 @@ interface IMessageCallback {
      * @param iMqttToken token when failure occured
      * @param throwable  exception
      */
-    fun onConnectionFailure(iMqttToken: IMqttToken, throwable: Throwable)
+    fun onConnectionFailure(iMqttToken: IMqttToken, throwable: Throwable?)
 
     /**
      * Called when disconnection is successfull
@@ -63,5 +63,5 @@ interface IMessageCallback {
      * @param iMqttToken token when failure occured
      * @param throwable  exception
      */
-    fun onDisconnectionFailure(iMqttToken: IMqttToken, throwable: Throwable)
+    fun onDisconnectionFailure(iMqttToken: IMqttToken, throwable: Throwable?)
 }
