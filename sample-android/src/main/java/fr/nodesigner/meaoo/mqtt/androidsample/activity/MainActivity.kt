@@ -21,8 +21,12 @@ import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
-import kotlinx.android.synthetic.main.main_activity.tvPosition
+import kotlinx.android.synthetic.main.main_activity.tvHeader
+import kotlinx.android.synthetic.main.main_activity.tvTargetX
+import kotlinx.android.synthetic.main.main_activity.tvTargetY
 import kotlinx.android.synthetic.main.main_activity.tvTime
+import kotlinx.android.synthetic.main.main_activity.tvUserX
+import kotlinx.android.synthetic.main.main_activity.tvUserY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -138,7 +142,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     private fun drawUserSituation(userSituation: UserSituation) {
         tvTime.text = "MEAOOTIME: ${formatTime(userSituation.totalCost)}"
-        tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
+        tvUserX.text = "x: ${userSituation.position.x.format(2)}"
+        tvUserY.text = "y: ${userSituation.position.y.format(2)}"
     }
 
     private fun userMissionUpdate(jsonString: String) {
@@ -174,11 +179,20 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     override fun onMissionCompleted() {
         missionExecutor = null
+        tvHeader.text = "Mission completed"
+        tvTargetX.text = "x: 0,00"
+        tvTargetY.text = "y: 0,00"
     }
 
     private fun presentOptionsToUser() {
         val userPosition = missionExecutor?.userSituation?.position ?: return
         val targetPosition = missionExecutor?.currentTarget ?: return
+
+        tvTargetX.text = "x: ${targetPosition.x.format(2)}"
+        tvTargetY.text = "y: ${targetPosition.y.format(2)}"
+
+        tvHeader.text =
+            "${missionExecutor!!.currentTargetIndex} / ${missionExecutor!!.maxIndex} objectives completed"
 
         val request = GraphService.Request(userPosition, targetPosition)
         val getShortestPaths = GetOptionsInteractor()
@@ -202,3 +216,5 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         }
     }
 }
+
+fun Double.format(digits: Int) = "%.${digits}f".format(this)

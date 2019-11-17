@@ -40,14 +40,180 @@
       app:layout_constraintTop_toTopOf="parent"
       >
 
-    <TextView
-        android:id="@+id/tvPosition"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        />
+        app:cardCornerRadius="4dp"
+        >
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          >
+
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="Mission isn't started yet"
+            android:textColor="#161616"
+            android:textSize="14sp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="#D8D8D8"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:orientation="horizontal"
+            >
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:orientation="horizontal"
+              android:paddingTop="16dp"
+              android:paddingBottom="16dp"
+              >
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_target"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                >
+
+              <TextView
+                  android:id="@+id/tvTargetX"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="x: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+              <TextView
+                  android:id="@+id/tvTargetY"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="y: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:orientation="horizontal"
+              android:paddingTop="16dp"
+              android:paddingBottom="16dp"
+              >
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_user"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                >
+
+              <TextView
+                  android:id="@+id/tvUserX"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="x: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+              <TextView
+                  android:id="@+id/tvUserY"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="y: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:orientation="horizontal"
+              android:paddingTop="16dp"
+              android:paddingBottom="16dp"
+              >
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_car"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                >
+
+              <TextView
+                  android:id="@+id/tvCarX"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="x: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+              <TextView
+                  android:id="@+id/tvCarY"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="y: 0,00"
+                  android:textAppearance="@style/text_coordinate"
+                  />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

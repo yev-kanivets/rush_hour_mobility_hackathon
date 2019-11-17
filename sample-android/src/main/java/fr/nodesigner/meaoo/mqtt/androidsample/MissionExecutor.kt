@@ -6,7 +6,6 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 
 class MissionExecutor(
     var userSituation: UserSituation,
-
     private val mission: Mission,
     private val listener: Listener
 ) {
@@ -19,6 +18,8 @@ class MissionExecutor(
 
         fun onMissionCompleted()
     }
+
+    val maxIndex = mission.positions.size
 
     var currentTargetIndex = 0
         private set
