@@ -117,7 +117,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                 MISSION_REQUEST -> presentOptionsToUser().also {
                     mainLayout.visibility = View.VISIBLE
                 }
-                MAP_REQUEST -> onStopped()
+                MAP_REQUEST -> btnStop.performClick()
             }
         }
     }

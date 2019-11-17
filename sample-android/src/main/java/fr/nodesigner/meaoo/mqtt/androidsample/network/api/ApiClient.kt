@@ -5,11 +5,14 @@ import fr.nodesigner.meaoo.mqtt.android.API_URL
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
     private val retrofit by lazy {
         val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
 
         val gsonBuilder = GsonBuilder()

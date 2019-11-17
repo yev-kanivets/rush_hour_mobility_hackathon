@@ -5,11 +5,13 @@ import fr.nodesigner.meaoo.mqtt.android.VEHICLE_URL
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object VehicleClient {
 
     private val retrofit by lazy {
         val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
 
         val gsonBuilder = GsonBuilder()

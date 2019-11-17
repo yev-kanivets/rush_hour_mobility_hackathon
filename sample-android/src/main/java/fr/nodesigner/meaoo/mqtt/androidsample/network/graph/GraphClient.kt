@@ -6,11 +6,13 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object GraphClient {
 
     private val retrofit by lazy {
         val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
 
         val gsonBuilder = GsonBuilder()

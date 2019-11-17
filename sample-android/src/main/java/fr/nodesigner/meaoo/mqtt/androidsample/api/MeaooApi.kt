@@ -34,9 +34,9 @@ class MeaooApi(private val namespace: String) {
     var agentHostPrefix: String = "agent-controller"
     var hostSuffix = "xp65.renault-digital.com"
 
-    var httpClient = OkHttpClient()
-
-    val manager = FuelManager()
+    val manager = FuelManager().apply {
+        timeoutReadInMillisecond = 30000
+    }
 
     init {
         manager.basePath = "http://localhost"
