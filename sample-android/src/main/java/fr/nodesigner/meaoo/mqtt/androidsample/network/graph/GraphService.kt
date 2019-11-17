@@ -1,6 +1,5 @@
 package fr.nodesigner.meaoo.mqtt.androidsample.network.graph
 
-import android.util.Log
 import com.google.gson.annotations.SerializedName
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import retrofit2.Response
@@ -8,6 +7,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import kotlin.math.abs
+import kotlin.math.min
 
 interface GraphService {
 
@@ -74,8 +75,17 @@ fun List<List<Double>>.target(initialTarget: Coordinate): Coordinate {
     val a = coords[coords.size - 2]
     val b = coords.last()
 
-    if (dist(a, b) < dist(a, initialTarget)) {
-       Log.d("FUCK", b.toString())
+    if (abs(dist(a, b) - dist(a, initialTarget)) > EPS) {
+        val isVertical = abs(a.y - b.y) > abs(a.x - b.x)
+        return if (isVertical) {
+            val delta = if (a.y < b.y) 0.5 else -0.5
+            val newY = min(6.0, b.y + delta)
+            Coordinate(b.x, newY)
+        } else {
+            val delta = if (a.x < b.x) 0.5 else -0.5
+            val newX = min(22.0, b.x + delta)
+            Coordinate(newX, b.y)
+        }
     }
 
     return coords.last()
