@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import kotlinx.android.synthetic.main.mission_activity.buttonGo
@@ -20,6 +21,7 @@ class MissionActivity : Activity() {
         val mission = intent.getParcelableExtra<Mission>(KEY_MISSION)
 
         tvMission.text = mission.mission
+        Log.v("test", mission.positions.toString())
         mission.positions.forEach { target ->
             val targetView = layoutInflater.inflate(R.layout.target_view_item, null)
             targetView.button.text = "x: ${target.x}, y: ${target.y}"
@@ -34,8 +36,8 @@ class MissionActivity : Activity() {
         private const val KEY_MISSION = "key_mission"
 
         fun newIntent(
-            context: Context,
-            mission: Mission
+                context: Context,
+                mission: Mission
         ) = Intent(context, MissionActivity::class.java).apply {
             putExtra(KEY_MISSION, mission)
         }

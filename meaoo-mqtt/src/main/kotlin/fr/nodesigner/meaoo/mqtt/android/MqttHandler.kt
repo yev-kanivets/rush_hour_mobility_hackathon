@@ -14,12 +14,14 @@ import kotlin.collections.ArrayList
 
 enum class TOPIC(val path: String) {
 
+    CHANGE_WEATHER("$TOPIC_PREFIX/prod/context/change/weather"),
+    CHANGE_AIR("$TOPIC_PREFIX/prod/context/change/air"),
     USER_SITUATION("$TOPIC_PREFIX/prod/user/situation"),
     USER_MISSION("$TOPIC_PREFIX/prod/user/mission"),
     USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission"),
     USER_STATUS("$TOPIC_PREFIX/prod/user/status"),
     OBJECTIVE_REACHED("$TOPIC_PREFIX/prod/user/objective-reached"),
-    CAR_SITUATION("$TOPIC_PREFIX/prod/0000000000000000/status/attitude"),
+    CAR_SITUATION("$TOPIC_PREFIX/prod/+/status/attitude"),
     ROADS_STATUS("$TOPIC_PREFIX/prod/environment/change/roads_status"),
     LINE_STATE("$TOPIC_PREFIX/prod/environment/change/lines_state"),
     TRAFFIC_CONDITIONS("$TOPIC_PREFIX/prod/environment/change/traffic_conditions")
@@ -154,8 +156,7 @@ class MqttHandler(context: Context) {
                 options.setUserName(mUsername)
                 options.setPassword(mPassword.toCharArray())
 
-                //val serverURI = "tcp://mr1dns3dpz5mjj.messaging.solace.cloud:1883"
-                val serverURI = "wss://mr1dns3dpz5mjj.messaging.solace.cloud:8443"
+                val serverURI = SERVER_URL
                 mClient = MqttAndroidClient(mContext, serverURI, mClientId)
                 mClient?.setCallback(mClientCb)
 

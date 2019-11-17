@@ -5,23 +5,18 @@ import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
 import android.widget.Button
-import android.widget.Toast
+import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
-import fr.nodesigner.meaoo.mqtt.android.TOPIC_PREFIX
-import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
-import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
+import fr.nodesigner.meaoo.mqtt.androidsample.MeaoApplication
 import fr.nodesigner.meaoo.mqtt.androidsample.api.MeaooApi
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.*
 import fr.nodesigner.meaoo.mqtt.androidsample.utils.WebviewUtils
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.util.concurrent.Executors
-import com.github.kittinunf.result.Result
-import com.google.gson.JsonSyntaxException
+import java.util.concurrent.TimeUnit
 
 class MapActivity : Activity() {
 
@@ -30,163 +25,9 @@ class MapActivity : Activity() {
     lateinit var mWebView: WebView
     lateinit var meooApi: MeaooApi
     inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
-    private val executor = Executors.newFixedThreadPool(1)
+    private val executor = Executors.newScheduledThreadPool(1)
 
     private fun connect() {
-        Singleton.setInternalCb(object : IMessageCallback {
-
-            override fun connectionLost(cause: Throwable?) {
-                var errorMessage = "connectionLost"
-                if (cause?.message != null) {
-                    errorMessage = cause.message!!
-                }
-                cause?.printStackTrace()
-                Log.v(TAG, "connectionLost $errorMessage")
-            }
-
-            @Throws(Exception::class)
-            override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
-                val jsonString = String(mqttMessage.payload)
-                Log.v("test", jsonString)
-                when (topic) {
-                    TOPIC.USER_SITUATION.path -> {
-                        val userSituation = Gson().fromJson<UserSituation>(jsonString, UserSituation::class.java)
-                        Log.v("test", userSituation.toString())
-                        Log.v("test", "" + userSituation.position.x + " et " + userSituation.position.y)
-                        WebviewUtils.callOnWebviewThread(mWebView, "move", (userSituation.position.x * 1000).toInt(), (userSituation.position.y * 1000).toInt())
-                        scroll(webview = mWebView, x = (userSituation.position.x * 1000).toInt(), y = (userSituation.position.y * 1000).toInt())
-                    }
-                    TOPIC.USER_STATUS.path -> {
-                        val userStatus = Gson().fromJson<UserStatus>(jsonString, UserStatus::class.java)
-                        WebviewUtils.callOnWebviewThread(mWebView, "move", (userStatus.userSituation.position.x * 1000).toInt(), (userStatus.userSituation.position.y * 1000).toInt())
-                        scroll(webview = mWebView, x = (userStatus.userSituation.position.x * 1000).toInt(), y = (userStatus.userSituation.position.y * 1000).toInt())
-                    }
-                    TOPIC.USER_MISSION.path -> {
-                        val mission = Gson().fromJson<Mission>(jsonString, Mission::class.java)
-                        for (i in mission.positions.indices) {
-                            WebviewUtils.callOnWebviewThread(mWebView, "setDestinationMarker", (mission.positions[i].x * 1000).toInt(), (mission.positions[i].y * 1000).toInt())
-                        }
-                    }
-                    TOPIC.CAR_SITUATION.path -> {
-                        val carSituation = Gson().fromJson<CarSituation>(jsonString, CarSituation::class.java)
-                        WebviewUtils.callOnWebviewThread(mWebView, "setCarMarker", (carSituation.position.x * 1000).toInt(), (carSituation.position.y * 1000).toInt())
-                        //scroll(webview = mWebView, x = (carSituation.position.x * 1000).toInt(), y = (carSituation.position.y * 1000).toInt())
-                    }
-                    TOPIC.ROADS_STATUS.path -> {
-                        val roadStatus = Gson().fromJson<List<RoadsStatus>>(jsonString)
-                        for (i in roadStatus[0].car.indices) {
-                            if (roadStatus[0].car[i].state == "close") {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (roadStatus[0].car[i].locations.from.x * 1000).toInt(),
-                                        (roadStatus[0].car[i].locations.from.y * 1000).toInt(),
-                                        (roadStatus[0].car[i].locations.to.x * 1000).toInt(),
-                                        (roadStatus[0].car[i].locations.to.y * 1000).toInt(), "road")
-                            }
-                        }
-                        for (i in roadStatus[0].bike.indices) {
-                            if (roadStatus[0].bike[i].state == "close") {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (roadStatus[0].bike[i].locations.from.x * 1000).toInt(),
-                                        (roadStatus[0].bike[i].locations.from.y * 1000).toInt(),
-                                        (roadStatus[0].bike[i].locations.to.x * 1000).toInt(),
-                                        (roadStatus[0].bike[i].locations.to.y * 1000).toInt(), "road")
-                            }
-                        }
-                        for (i in roadStatus[0].walk.indices) {
-                            if (roadStatus[0].walk[i].state == "close") {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (roadStatus[0].walk[i].locations.from.x * 1000).toInt(),
-                                        (roadStatus[0].walk[i].locations.from.y * 1000).toInt(),
-                                        (roadStatus[0].walk[i].locations.to.x * 1000).toInt(),
-                                        (roadStatus[0].walk[i].locations.to.y * 1000).toInt(), "road")
-                            }
-                        }
-                    }
-                    TOPIC.LINE_STATE.path -> {
-                        val lineState = Gson().fromJson<Array<Edge>>(jsonString, Array<Edge>::class.java)
-                        for (i in lineState.indices) {
-                            if (lineState[i].state == "close") {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "metro")
-                            }
-                        }
-                    }
-                    TOPIC.TRAFFIC_CONDITIONS.path -> {
-                        val lineState = Gson().fromJson<Array<TrafficCondition>>(jsonString, Array<TrafficCondition>::class.java)
-                        for (i in lineState.indices) {
-                            if (lineState[i].slowing_factor in 1..2) {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FFA12C")
-                            }
-                            if (lineState[i].slowing_factor in 2..4) {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FF872C")
-                            }
-                            if (lineState[i].slowing_factor in 4..6) {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FE612C")
-                            }
-                            if (lineState[i].slowing_factor in 6..8) {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FD3A2D")
-                            }
-                            if (lineState[i].slowing_factor in 8..11) {
-                                WebviewUtils.callOnWebviewThread(mWebView, "close",
-                                        (lineState[i].locations.from.x * 1000).toInt(),
-                                        (lineState[i].locations.from.y * 1000).toInt(),
-                                        (lineState[i].locations.to.x * 1000).toInt(),
-                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#F11D28")
-                            }
-                        }
-                    }
-                    else -> Log.v(TAG, "[$topic] $jsonString")
-                }
-            }
-
-            override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
-                Log.v(TAG, "in delivery complete ${messageToken.message}")
-            }
-
-            override fun onConnectionSuccess(token: IMqttToken) {
-                Singleton.subscribeToAllTopics()
-                Log.v(TAG, "onConnectionSuccess")
-            }
-
-            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable?) {
-                var errorMessage = "connection error"
-                if (throwable?.message != null) {
-                    errorMessage = throwable.message!!
-                }
-            }
-
-            override fun onDisconnectionSuccess(token: IMqttToken) {
-                Log.v(TAG, "onDisconnectionSuccess")
-            }
-
-            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable?) {
-                Log.v(TAG, "onDisconnectionFailure")
-            }
-        })
-
-        Singleton.setupApplication(applicationContext, false, true)
-        Singleton.connect()
-        Log.v(TAG, "after connect")
-
         executor.execute {
             try {
                 val (_, _, result) = meooApi.getVehicles()
@@ -330,12 +171,137 @@ class MapActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity)
+        findViewById<Button>(R.id.btnStop).setOnClickListener {
+            finish()
+        }
+        val app = application as MeaoApplication
+        app.listeners.add(object : MeaoApplication.MessageArrivedCallback {
+            override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
+                val jsonString = String(mqttMessage.payload)
+                Log.v("test", jsonString)
+                when (topic) {
+                    TOPIC.USER_SITUATION.path -> {
+                        val userSituation = Gson().fromJson<UserSituation>(jsonString, UserSituation::class.java)
+                        Log.v("test", userSituation.toString())
+                        Log.v("test", "" + userSituation.position.x + " et " + userSituation.position.y)
+                        WebviewUtils.callOnWebviewThread(mWebView, "move", (userSituation.position.x * 1000).toInt(), (userSituation.position.y * 1000).toInt())
+                        scroll(webview = mWebView, x = (userSituation.position.x * 1000).toInt(), y = (userSituation.position.y * 1000).toInt())
+                    }
+                    TOPIC.USER_STATUS.path -> {
+                        val userStatus = Gson().fromJson<UserStatus>(jsonString, UserStatus::class.java)
+                        if (userStatus.status == "stopped") {
+                            executor.schedule({
+                                finish()
+                            }, 2, TimeUnit.SECONDS)
+                        } else {
+                            WebviewUtils.callOnWebviewThread(mWebView, "move", (userStatus.userSituation.position.x * 1000).toInt(), (userStatus.userSituation.position.y * 1000).toInt())
+                            scroll(webview = mWebView, x = (userStatus.userSituation.position.x * 1000).toInt(), y = (userStatus.userSituation.position.y * 1000).toInt())
+                        }
+                    }
+                    TOPIC.USER_MISSION.path -> {
+                        val mission = Gson().fromJson<Mission>(jsonString, Mission::class.java)
+                        for (i in mission.positions.indices) {
+                            WebviewUtils.callOnWebviewThread(mWebView, "setDestinationMarker", (mission.positions[i].x * 1000).toInt(), (mission.positions[i].y * 1000).toInt())
+                        }
+                    }
+                    TOPIC.CAR_SITUATION.path -> {
+                        val carSituation = Gson().fromJson<CarSituation>(jsonString, CarSituation::class.java)
+                        WebviewUtils.callOnWebviewThread(mWebView, "setCarMarker", (carSituation.position.x * 1000).toInt(), (carSituation.position.y * 1000).toInt())
+                        //scroll(webview = mWebView, x = (carSituation.position.x * 1000).toInt(), y = (carSituation.position.y * 1000).toInt())
+                    }
+                    TOPIC.ROADS_STATUS.path -> {
+                        val roadStatus = Gson().fromJson<List<RoadsStatus>>(jsonString)
+                        for (i in roadStatus[0].car.indices) {
+                            if (roadStatus[0].car[i].state == "close") {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (roadStatus[0].car[i].locations.from.x * 1000).toInt(),
+                                        (roadStatus[0].car[i].locations.from.y * 1000).toInt(),
+                                        (roadStatus[0].car[i].locations.to.x * 1000).toInt(),
+                                        (roadStatus[0].car[i].locations.to.y * 1000).toInt(), "road")
+                            }
+                        }
+                        for (i in roadStatus[0].bike.indices) {
+                            if (roadStatus[0].bike[i].state == "close") {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (roadStatus[0].bike[i].locations.from.x * 1000).toInt(),
+                                        (roadStatus[0].bike[i].locations.from.y * 1000).toInt(),
+                                        (roadStatus[0].bike[i].locations.to.x * 1000).toInt(),
+                                        (roadStatus[0].bike[i].locations.to.y * 1000).toInt(), "road")
+                            }
+                        }
+                        for (i in roadStatus[0].walk.indices) {
+                            if (roadStatus[0].walk[i].state == "close") {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (roadStatus[0].walk[i].locations.from.x * 1000).toInt(),
+                                        (roadStatus[0].walk[i].locations.from.y * 1000).toInt(),
+                                        (roadStatus[0].walk[i].locations.to.x * 1000).toInt(),
+                                        (roadStatus[0].walk[i].locations.to.y * 1000).toInt(), "road")
+                            }
+                        }
+                    }
+                    TOPIC.LINE_STATE.path -> {
+                        val lineState = Gson().fromJson<Array<Edge>>(jsonString, Array<Edge>::class.java)
+                        for (i in lineState.indices) {
+                            if (lineState[i].state == "close") {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "metro")
+                            }
+                        }
+                    }
+                    TOPIC.TRAFFIC_CONDITIONS.path -> {
+                        val lineState = Gson().fromJson<Array<TrafficCondition>>(jsonString, Array<TrafficCondition>::class.java)
+                        for (i in lineState.indices) {
+                            if (lineState[i].slowing_factor in 1..2) {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FFA12C")
+                            }
+                            if (lineState[i].slowing_factor in 2..4) {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FF872C")
+                            }
+                            if (lineState[i].slowing_factor in 4..6) {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FE612C")
+                            }
+                            if (lineState[i].slowing_factor in 6..8) {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#FD3A2D")
+                            }
+                            if (lineState[i].slowing_factor in 8..11) {
+                                WebviewUtils.callOnWebviewThread(mWebView, "close",
+                                        (lineState[i].locations.from.x * 1000).toInt(),
+                                        (lineState[i].locations.from.y * 1000).toInt(),
+                                        (lineState[i].locations.to.x * 1000).toInt(),
+                                        (lineState[i].locations.to.y * 1000).toInt(), "slowdown", "#F11D28")
+                            }
+                        }
+                    }
+                    else -> Log.v(TAG, "[$topic] $jsonString")
+                }
+            }
+        })
         meooApi = MeaooApi("team10")
         WebView.setWebContentsDebuggingEnabled(true)
         mWebView = findViewById(R.id.map_view)
         mWebView.settings.javaScriptEnabled = true
-        mWebView.setInitialScale(200)
+        mWebView.setInitialScale(350)
         mWebView.loadUrl("file:///android_asset/map.html")
+        /*
         findViewById<Button>(R.id.move200_2000).setOnClickListener {
             WebviewUtils.callOnWebviewThread(mWebView, "move", 200, 2000)
             //mWebView.scrollTo(0, 1200)
@@ -418,6 +384,7 @@ class MapActivity : Activity() {
             )
             scroll(webview = mWebView, x = 200, y = 2000)
         }
+        */
         connect()
     }
 

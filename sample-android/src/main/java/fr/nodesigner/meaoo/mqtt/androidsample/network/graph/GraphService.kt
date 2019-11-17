@@ -7,6 +7,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import kotlin.math.abs
+import kotlin.math.min
 
 interface GraphService {
 
@@ -64,4 +66,27 @@ interface GraphService {
         @SerializedName("costs") val costs: List<Double>,
         @SerializedName("path_length") val pathLength: Double
     )
+}
+
+fun List<List<Double>>.target(initialTarget: Coordinate): Coordinate {
+    val coords = map { point -> Coordinate(point[0], point[1]) }
+    if (coords.size == 1) return coords[0]
+
+    val a = coords[coords.size - 2]
+    val b = coords.last()
+
+    if (abs(dist(a, b) - dist(a, initialTarget)) > EPS) {
+        val isVertical = abs(a.y - b.y) > abs(a.x - b.x)
+        return if (isVertical) {
+            val delta = if (a.y < b.y) 0.5 else -0.5
+            val newY = min(6.0, b.y + delta)
+            Coordinate(b.x, newY)
+        } else {
+            val delta = if (a.x < b.x) 0.5 else -0.5
+            val newX = min(22.0, b.x + delta)
+            Coordinate(newX, b.y)
+        }
+    }
+
+    return coords.last()
 }

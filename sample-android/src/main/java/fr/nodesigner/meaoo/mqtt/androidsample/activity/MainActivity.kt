@@ -4,43 +4,30 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
-import fr.nodesigner.meaoo.mqtt.android.listener.IMessageCallback
 import fr.nodesigner.meaoo.mqtt.android.model.Path
+import fr.nodesigner.meaoo.mqtt.androidsample.MeaoApplication
 import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.CarSituation
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.*
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import fr.nodesigner.meaoo.mqtt.androidsample.network.vehicle.VehicleClient
-import kotlinx.android.synthetic.main.main_activity.btnStop
-import kotlinx.android.synthetic.main.main_activity.recyclerView
-import kotlinx.android.synthetic.main.main_activity.tvCarX
-import kotlinx.android.synthetic.main.main_activity.tvCarY
-import kotlinx.android.synthetic.main.main_activity.tvHeader
-import kotlinx.android.synthetic.main.main_activity.tvTargetX
-import kotlinx.android.synthetic.main.main_activity.tvTargetY
-import kotlinx.android.synthetic.main.main_activity.tvTime
-import kotlinx.android.synthetic.main.main_activity.tvUserX
-import kotlinx.android.synthetic.main.main_activity.tvUserY
+import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
 var carSituation: CarSituation? = null
+var airCondition = "normal"
+var weatherCondition = "normal"
 
 class MainActivity : Activity(), MissionExecutor.Listener {
 
@@ -57,7 +44,29 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
+        val app = application  as MeaoApplication
+        app.listeners.add(object: MeaoApplication.MessageArrivedCallback {
+            override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
+                val jsonString = String(mqttMessage.payload)
+                when (topic) {
+                    TOPIC.USER_SITUATION.path -> userSituationUpdate(jsonString)
+                    TOPIC.USER_MISSION.path, TOPIC.USER_MISSION_DEV.path -> {
+                        userMissionUpdate(jsonString)
+                    }
+                    TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
+                    TOPIC.OBJECTIVE_REACHED.path -> objectiveReached()
+                    TOPIC.CHANGE_WEATHER.path -> changeWeather(jsonString)
+                    TOPIC.CHANGE_AIR.path -> changeAir(jsonString)
+                    else -> {
+                        if (topic.endsWith("attitude")) {
+                            carSituationUpdate(jsonString)
+                        } else {
+                            Log.v(TAG, "[$topic] $jsonString")
+                        }
+                    }
+                }
+            }
+        })
         initRecycler()
 
         btnStop.setOnClickListener {
@@ -68,8 +77,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                 Singleton.publishAgentStop()
             }
         }
-
-        connect()
     }
 
     private fun initRecycler() {
@@ -80,6 +87,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
             Singleton.publishAgentPath(Path(vehicleType, target))
             adapter.options = listOf()
+            startActivity(Intent(this@MainActivity, MapActivity::class.java))
         }
         recyclerView.adapter = adapter
     }
@@ -92,63 +100,6 @@ class MainActivity : Activity(), MissionExecutor.Listener {
             }
         }
     }
-
-    private fun connect() {
-        Singleton.setInternalCb(object : IMessageCallback {
-
-            override fun connectionLost(cause: Throwable?) {
-                var errorMessage = "connectionLost"
-                if (cause?.message != null) {
-                    errorMessage = cause.message!!
-                }
-                cause?.printStackTrace()
-                Log.v(TAG, "connectionLost $errorMessage")
-            }
-
-            @Throws(Exception::class)
-            override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
-                val jsonString = String(mqttMessage.payload)
-                when (topic) {
-                    TOPIC.USER_SITUATION.path -> userSituationUpdate(jsonString)
-                    TOPIC.USER_MISSION.path, TOPIC.USER_MISSION_DEV.path -> {
-                        userMissionUpdate(jsonString)
-                    }
-                    TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
-                    TOPIC.OBJECTIVE_REACHED.path -> objectiveReached()
-                    else -> Log.v(TAG, "[$topic] $jsonString")
-                }
-            }
-
-            override fun deliveryComplete(messageToken: IMqttDeliveryToken) {
-                Log.v(TAG, "in delivery complete ${messageToken.message}")
-            }
-
-            override fun onConnectionSuccess(token: IMqttToken) {
-                Toast.makeText(this@MainActivity, "connnected to server", Toast.LENGTH_SHORT).show()
-                Singleton.subscribeToAllTopics()
-            }
-
-            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable?) {
-                var errorMessage = "connection error"
-                if (throwable?.message != null) {
-                    errorMessage = throwable.message!!
-                }
-                Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onDisconnectionSuccess(token: IMqttToken) {
-                Log.v(TAG, "onDisconnectionSuccess")
-            }
-
-            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable?) {
-                Log.v(TAG, "onDisconnectionFailure")
-            }
-        })
-
-        Singleton.setupApplication(applicationContext, false, true)
-        Singleton.connect()
-    }
-
     private val gson = Gson()
 
     private fun userSituationUpdate(jsonString: String) {
@@ -167,10 +118,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         uiScope.launch {
             carSituation = VehicleClient.getLastVehicleSituation()?.attitude
-            carSituation?.let {
-                tvCarX.text = "x: ${it.position.x.format(2)}"
-                tvCarY.text = "y: ${it.position.y.format(2)}"
-            }
+            drawCarSituation()
 
             val userSituation = ApiClient.getLastUserSituation().body()!!
             missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
@@ -178,6 +126,11 @@ class MainActivity : Activity(), MissionExecutor.Listener {
             val intent = MissionActivity.newIntent(this@MainActivity, mission)
             startActivityForResult(intent, MISSION_REQUEST)
         }
+    }
+
+    private fun drawCarSituation() = carSituation?.let {
+        tvCarX.text = "x: ${it.position.x.format(2)}"
+        tvCarY.text = "y: ${it.position.y.format(2)}"
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -192,6 +145,37 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         missionExecutor?.onTargetReached()
     }
 
+    private fun carSituationUpdate(jsonString: String) {
+        carSituation = gson.fromJson<CarSituation>(jsonString, CarSituation::class.java)
+        drawCarSituation()
+    }
+
+    private fun changeAir(jsonString: String) {
+        val condition = gson.fromJson<Condition>(jsonString, Condition::class.java)
+        airCondition = condition.condition
+
+        val resId = when (airCondition) {
+            "normal" -> R.drawable.ic_low_pollution
+            "pollution peak" -> R.drawable.ic_high_pollution
+            else -> R.drawable.ic_low_pollution
+        }
+        ivAir.setImageDrawable(getDrawable(resId))
+    }
+
+    private fun changeWeather(jsonString: String) {
+        val condition = gson.fromJson<Condition>(jsonString, Condition::class.java)
+        weatherCondition = condition.condition
+
+        val resId = when (weatherCondition) {
+            "normal" -> R.drawable.ic_normal
+            "snow" -> R.drawable.ic_snow
+            "rain" -> R.drawable.ic_rain
+            "heat wave" -> R.drawable.ic_heat
+            else -> R.drawable.ic_normal
+        }
+        ivWeather.setImageDrawable(getDrawable(resId))
+    }
+
     override fun onStopped() {
         presentOptionsToUser()
     }
@@ -203,8 +187,9 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     override fun onMissionCompleted() {
         missionExecutor = null
         tvHeader.text = "Mission completed"
-        tvTargetX.text = "x: 0,00"
-        tvTargetY.text = "y: 0,00"
+        tvTargetX.text = "x: 0.00"
+        tvTargetY.text = "y: 0.00"
+        startActivity(Intent(this, MissionCompleteActivity::class.java))
     }
 
     private fun presentOptionsToUser() {
@@ -215,7 +200,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         tvTargetY.text = "y: ${targetPosition.y.format(2)}"
 
         tvHeader.text =
-            "${missionExecutor!!.currentTargetIndex} / ${missionExecutor!!.maxIndex} objectives completed"
+                "${missionExecutor!!.currentTargetIndex} / ${missionExecutor!!.maxIndex} objectives completed"
 
         val request = GraphService.Request(userPosition, targetPosition)
         val getShortestPaths = GetOptionsInteractor()

@@ -18,14 +18,14 @@ class GetOptionsInteractor {
     private suspend fun getWalkOption(request: GraphService.Request): Option? {
         val pathWalk = GraphClient.getShortestPathWalk(request).body() ?: return null
         val path = pathWalk.cars.first()
-        val target = path.paths.map { point -> Coordinate(point[0], point[1]) }.last()
+        val target = path.paths.target(request.arrival)
         return Option.WalkToTarget(target, path.pathLength)
     }
 
     private suspend fun getBikeOption(request: GraphService.Request): Option? {
         val pathBike = GraphClient.getShortestPathBike(request).body() ?: return null
         val path = pathBike.cars.first()
-        val target = path.paths.map { point -> Coordinate(point[0], point[1]) }.last()
+        val target = path.paths.target(request.arrival)
         return Option.BikeToTarget(target, path.pathLength)
     }
 }

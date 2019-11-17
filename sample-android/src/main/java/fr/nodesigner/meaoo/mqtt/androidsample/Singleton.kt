@@ -175,6 +175,8 @@ object Singleton {
 
     fun subscribeToAllTopics() {
         mHandler?.apply {
+            subscribe(TOPIC.CHANGE_WEATHER.path, mQosDefault, null)
+            subscribe(TOPIC.CHANGE_AIR.path, mQosDefault, null)
             subscribe(TOPIC.USER_SITUATION.path, mQosDefault, null)
             subscribe(TOPIC.USER_MISSION.path, mQosDefault, null)
             subscribe(TOPIC.USER_MISSION_DEV.path, mQosDefault, null)

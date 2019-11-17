@@ -8,10 +8,19 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="9"
         android:scrollbars="none" />
 
-    <ScrollView
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#EF5350"
+        android:text="STOP"
+        android:textColor="@color/white"
+        />
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -112,5 +121,5 @@
                 android:text="set roadmap" />
 
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
 </LinearLayout>

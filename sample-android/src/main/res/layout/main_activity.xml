@@ -18,12 +18,45 @@
         android:layout_height="wrap_content"
         >
 
-      <TextView
-          android:id="@+id/tvTime"
-          android:layout_width="wrap_content"
+      <LinearLayout
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="MEAOOTIME: 00:00"
-          />
+          android:gravity="center_vertical"
+          android:orientation="horizontal"
+          >
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MEAOOTIME: 00:00"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/ivAir"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_low_pollution"
+            android:tint="#666666"
+            />
+
+        <ImageView
+            android:id="@+id/ivWeather"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_normal"
+            android:tint="#666666"
+            />
+
+      </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -109,7 +142,7 @@
                   android:id="@+id/tvTargetX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -117,7 +150,7 @@
                   android:id="@+id/tvTargetY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -151,7 +184,7 @@
                   android:id="@+id/tvUserX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -159,7 +192,7 @@
                   android:id="@+id/tvUserY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -193,7 +226,7 @@
                   android:id="@+id/tvCarX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -201,7 +234,7 @@
                   android:id="@+id/tvCarY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
