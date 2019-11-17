@@ -62,207 +62,226 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <LinearLayout
+  <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:orientation="vertical"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
       >
 
-    <androidx.cardview.widget.CardView
+    <com.airbnb.lottie.LottieAnimationView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="4dp"
+        android:layout_height="match_parent"
+        android:padding="32dp"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="briefing.json"
+        app:lottie_loop="true"
+        />
+
+    <LinearLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         >
 
-      <LinearLayout
+      <androidx.cardview.widget.CardView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical"
+          android:layout_marginStart="12dp"
+          android:layout_marginTop="16dp"
+          android:layout_marginEnd="12dp"
+          android:layout_marginBottom="16dp"
+          app:cardCornerRadius="4dp"
           >
-
-        <TextView
-            android:id="@+id/tvHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Mission isn't started yet"
-            android:textColor="#161616"
-            android:textSize="14sp"
-            />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="#D8D8D8"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             >
 
-          <LinearLayout
-              android:layout_width="0dp"
+          <TextView
+              android:id="@+id/tvHeader"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_weight="1"
+              android:layout_gravity="center"
+              android:layout_marginTop="8dp"
+              android:layout_marginBottom="4dp"
+              android:text="Mission isn't started yet"
+              android:textColor="#161616"
+              android:textSize="14sp"
+              />
+
+          <View
+              android:layout_width="match_parent"
+              android:layout_height="1dp"
+              android:layout_marginStart="8dp"
+              android:layout_marginEnd="8dp"
+              android:background="#D8D8D8"
+              />
+
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="32dp"
               android:orientation="horizontal"
-              android:paddingTop="16dp"
-              android:paddingBottom="16dp"
               >
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_target"
-                />
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 >
 
-              <TextView
-                  android:id="@+id/tvTargetX"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="x: 0.00"
-                  android:textAppearance="@style/text_coordinate"
+              <ImageView
+                  android:layout_width="32dp"
+                  android:layout_height="32dp"
+                  android:src="@drawable/ic_target"
                   />
 
-              <TextView
-                  android:id="@+id/tvTargetY"
+              <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0.00"
-                  android:textAppearance="@style/text_coordinate"
+                  android:layout_marginStart="8dp"
+                  android:orientation="vertical"
+                  >
+
+                <TextView
+                    android:id="@+id/tvTargetX"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="x: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+                <TextView
+                    android:id="@+id/tvTargetY"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="y: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+              </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                >
+
+              <ImageView
+                  android:layout_width="32dp"
+                  android:layout_height="32dp"
+                  android:src="@drawable/ic_user"
                   />
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="8dp"
+                  android:orientation="vertical"
+                  >
+
+                <TextView
+                    android:id="@+id/tvUserX"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="x: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+                <TextView
+                    android:id="@+id/tvUserY"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="y: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+              </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                >
+
+              <ImageView
+                  android:layout_width="32dp"
+                  android:layout_height="32dp"
+                  android:src="@drawable/ic_car"
+                  />
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="8dp"
+                  android:orientation="vertical"
+                  >
+
+                <TextView
+                    android:id="@+id/tvCarX"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="x: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+                <TextView
+                    android:id="@+id/tvCarY"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="y: 0.00"
+                    android:textAppearance="@style/text_coordinate"
+                    />
+
+              </LinearLayout>
 
             </LinearLayout>
 
           </LinearLayout>
 
-          <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:orientation="horizontal"
-              android:paddingTop="16dp"
-              android:paddingBottom="16dp"
-              >
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_user"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical"
-                >
-
-              <TextView
-                  android:id="@+id/tvUserX"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="x: 0.00"
-                  android:textAppearance="@style/text_coordinate"
-                  />
-
-              <TextView
-                  android:id="@+id/tvUserY"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="y: 0.00"
-                  android:textAppearance="@style/text_coordinate"
-                  />
-
-            </LinearLayout>
-
-          </LinearLayout>
-
-          <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:orientation="horizontal"
-              android:paddingTop="16dp"
-              android:paddingBottom="16dp"
-              >
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_car"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical"
-                >
-
-              <TextView
-                  android:id="@+id/tvCarX"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="x: 0.00"
-                  android:textAppearance="@style/text_coordinate"
-                  />
-
-              <TextView
-                  android:id="@+id/tvCarY"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="y: 0.00"
-                  android:textAppearance="@style/text_coordinate"
-                  />
-
-            </LinearLayout>
-
-          </LinearLayout>
+          <Button
+              android:id="@+id/btnStop"
+              android:layout_width="match_parent"
+              android:layout_height="36dp"
+              android:background="#EF5350"
+              android:text="STOP"
+              android:textColor="@color/white"
+              />
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnStop"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:background="#EF5350"
-            android:text="STOP"
-            android:textColor="@color/white"
-            />
+      </androidx.cardview.widget.CardView>
 
-      </LinearLayout>
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/recyclerView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
 
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-  </LinearLayout>
+  </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

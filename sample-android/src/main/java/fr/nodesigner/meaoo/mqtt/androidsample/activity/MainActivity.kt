@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import fr.nodesigner.meaoo.androidsample.R
@@ -25,6 +26,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.network.vehicle.VehicleClient
 import kotlinx.android.synthetic.main.main_activity.btnStop
 import kotlinx.android.synthetic.main.main_activity.ivAir
 import kotlinx.android.synthetic.main.main_activity.ivWeather
+import kotlinx.android.synthetic.main.main_activity.mainLayout
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvCarX
 import kotlinx.android.synthetic.main.main_activity.tvCarY
@@ -112,7 +114,9 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                MISSION_REQUEST -> presentOptionsToUser()
+                MISSION_REQUEST -> presentOptionsToUser().also {
+                    mainLayout.visibility = View.VISIBLE
+                }
                 MAP_REQUEST -> onStopped()
             }
         }
@@ -207,6 +211,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         tvHeader.text = "Mission completed"
         tvTargetX.text = "x: 0.00"
         tvTargetY.text = "y: 0.00"
+        mainLayout.visibility = View.VISIBLE
         startActivity(Intent(this, MissionCompleteActivity::class.java))
     }
 
