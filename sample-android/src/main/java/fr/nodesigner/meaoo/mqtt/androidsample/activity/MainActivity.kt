@@ -18,7 +18,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
-import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetShortestPathsInteractor
+import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
@@ -54,10 +54,10 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         adapter = PathAdapter(this@MainActivity) { selectedPath ->
             val vehicleType = selectedPath.transport.string
-            val target = selectedPath.items.last().coordinate
+            val target = selectedPath.coordinate
 
             Singleton.publishAgentPath(Path(vehicleType, target))
-            adapter.paths = listOf()
+            adapter.options = listOf()
         }
         recyclerView.adapter = adapter
     }
@@ -179,10 +179,10 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val targetPosition = missionExecutor?.currentTarget ?: return
 
         val request = GraphService.Request(userPosition, targetPosition)
-        val getShortestPaths = GetShortestPathsInteractor()
+        val getShortestPaths = GetOptionsInteractor()
 
         uiScope.launch {
-            adapter.paths = getShortestPaths.execute(request)
+            adapter.options = getShortestPaths.execute(request)
         }
     }
 }

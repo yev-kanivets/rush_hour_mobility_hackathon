@@ -8,18 +8,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import fr.nodesigner.meaoo.androidsample.R
-import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.Transport
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Option
 import kotlinx.android.synthetic.main.path_view_item.view.ivTransport
 import kotlinx.android.synthetic.main.path_view_item.view.tvTime
 import kotlin.math.roundToInt
 
 class PathAdapter(
     private val context: Context,
-    private val itemClickListener: (Path) -> Unit
+    private val itemClickListener: (Option) -> Unit
 ) : RecyclerView.Adapter<PathAdapter.ViewHolder>() {
 
-    var paths: List<Path> = listOf()
+    var options: List<Option> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -30,21 +29,23 @@ class PathAdapter(
         return ViewHolder(layout, itemClickListener)
     }
 
-    override fun getItemCount(): Int = paths.size
+    override fun getItemCount(): Int = options.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val path = paths[position]
+        val option = options[position]
 
         holder.apply {
-            val iconRes = when (path.transport) {
-                Transport.WALK -> R.drawable.ic_walk
-                Transport.SUBWAY -> R.drawable.ic_subway
-                Transport.BIKE -> R.drawable.ic_bike
-                Transport.CAR -> R.drawable.ic_car
+            val iconRes = when (option) {
+                is Option.WalkToTarget -> R.drawable.ic_walk
+                is Option.WalkToSubway -> R.drawable.ic_walk
+                is Option.BikeToTarget -> R.drawable.ic_bike
+                is Option.CallTaxi -> R.drawable.ic_car
+                is Option.UseTaxiToTarget -> R.drawable.ic_car
+                is Option.UseMetroToTarget -> R.drawable.ic_subway
             }
 
             holder.ivTransport.setImageDrawable(context.getDrawable(iconRes))
-            holder.tvTime.text = formatTime(path.items.sumByDouble { it.cost })
+            holder.tvTime.text = formatTime(option.cost)
         }
     }
 
@@ -56,18 +57,7 @@ class PathAdapter(
         return "$hours:$minutes"
     }
 
-    data class Path(
-        val transport: Transport,
-        val items: List<PathItem>
-    )
-
-    data class PathItem(
-        val coordinate: Coordinate,
-        val cost: Double,
-        val type: Transport
-    )
-
-    inner class ViewHolder(view: View, itemClickListener: (Path) -> Unit) :
+    inner class ViewHolder(view: View, itemClickListener: (Option) -> Unit) :
         RecyclerView.ViewHolder(view) {
 
         val ivTransport: ImageView = view.ivTransport
@@ -75,7 +65,7 @@ class PathAdapter(
 
         init {
             view.setOnClickListener {
-                itemClickListener.invoke(paths[adapterPosition])
+                itemClickListener.invoke(options[adapterPosition])
             }
         }
     }

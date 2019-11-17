@@ -6,6 +6,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 
 class MissionExecutor(
     var userSituation: UserSituation,
+
     private val mission: Mission,
     private val listener: Listener
 ) {
