@@ -19,7 +19,7 @@ enum class TOPIC(val path: String) {
     USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission"),
     USER_STATUS("$TOPIC_PREFIX/prod/user/status"),
     OBJECTIVE_REACHED("$TOPIC_PREFIX/prod/user/objective-reached"),
-    CAR_SITUATION("$TOPIC_PREFIX/prod/{id}/status/attitude")
+    CAR_SITUATION("$TOPIC_PREFIX/prod/+/status/attitude")
 }
 
 /**

@@ -1,5 +1,6 @@
 package fr.nodesigner.meaoo.mqtt.androidsample.network.graph
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import retrofit2.Response
@@ -64,4 +65,18 @@ interface GraphService {
         @SerializedName("costs") val costs: List<Double>,
         @SerializedName("path_length") val pathLength: Double
     )
+}
+
+fun List<List<Double>>.target(initialTarget: Coordinate): Coordinate {
+    val coords = map { point -> Coordinate(point[0], point[1]) }
+    if (coords.size == 1) return coords[0]
+
+    val a = coords[coords.size - 2]
+    val b = coords.last()
+
+    if (dist(a, b) < dist(a, initialTarget)) {
+       Log.d("FUCK", b.toString())
+    }
+
+    return coords.last()
 }

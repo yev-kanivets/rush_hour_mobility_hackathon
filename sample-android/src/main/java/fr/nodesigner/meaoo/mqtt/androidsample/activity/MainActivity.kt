@@ -115,7 +115,13 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                     }
                     TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
                     TOPIC.OBJECTIVE_REACHED.path -> objectiveReached()
-                    else -> Log.v(TAG, "[$topic] $jsonString")
+                    else -> {
+                        if (topic.endsWith("attitude")) {
+                            carSituationUpdate(jsonString)
+                        } else {
+                            Log.v(TAG, "[$topic] $jsonString")
+                        }
+                    }
                 }
             }
 
@@ -167,10 +173,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         uiScope.launch {
             carSituation = VehicleClient.getLastVehicleSituation()?.attitude
-            carSituation?.let {
-                tvCarX.text = "x: ${it.position.x.format(2)}"
-                tvCarY.text = "y: ${it.position.y.format(2)}"
-            }
+            drawCarSituation()
 
             val userSituation = ApiClient.getLastUserSituation().body()!!
             missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
@@ -178,6 +181,11 @@ class MainActivity : Activity(), MissionExecutor.Listener {
             val intent = MissionActivity.newIntent(this@MainActivity, mission)
             startActivityForResult(intent, MISSION_REQUEST)
         }
+    }
+
+    private fun drawCarSituation() = carSituation?.let {
+        tvCarX.text = "x: ${it.position.x.format(2)}"
+        tvCarY.text = "y: ${it.position.y.format(2)}"
     }
 
     private fun userStatusUpdate(jsonString: String) {
@@ -190,6 +198,11 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     private fun objectiveReached() {
         missionExecutor?.onTargetReached()
+    }
+
+    private fun carSituationUpdate(jsonString: String) {
+        carSituation = gson.fromJson<CarSituation>(jsonString, CarSituation::class.java)
+        drawCarSituation()
     }
 
     override fun onStopped() {
