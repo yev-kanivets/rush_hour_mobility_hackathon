@@ -9,6 +9,7 @@ import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fr.nodesigner.meaoo.androidsample.R
+import fr.nodesigner.meaoo.mqtt.android.NAMESPACE
 import fr.nodesigner.meaoo.mqtt.android.TOPIC
 import fr.nodesigner.meaoo.mqtt.androidsample.MeaoApplication
 import fr.nodesigner.meaoo.mqtt.androidsample.api.MeaooApi
@@ -293,11 +294,18 @@ class MapActivity : Activity() {
                             }
                         }
                     }
-                    else -> Log.v(TAG, "[$topic] $jsonString")
+                    else -> {
+                        if (topic.endsWith("attitude")) {
+                            val carSituation = Gson().fromJson<CarSituation>(jsonString, CarSituation::class.java)
+                            WebviewUtils.callOnWebviewThread(mWebView, "setCarMarker", (carSituation.position.x * 1000).toInt(), (carSituation.position.y * 1000).toInt())
+                        } else {
+                            Log.v(TAG, "[$topic] $jsonString")
+                        }
+                    }
                 }
             }
         })
-        meooApi = MeaooApi("team10")
+        meooApi = MeaooApi(NAMESPACE)
         WebView.setWebContentsDebuggingEnabled(true)
         mWebView = findViewById(R.id.map_view)
         mWebView.settings.javaScriptEnabled = true

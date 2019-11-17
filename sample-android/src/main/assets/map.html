@@ -230,6 +230,9 @@ function setMarker(image, startNode) {
 }
 
 function setCarMarker(x, y) {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.drawImage(image, 0, 0);
+    ctx.beginPath();
 	var marker = new CarMarker();
 	marker.Sprite.onload = function(){
 		marker.XPos = calculateX(x) - (marker.Width / 2);
