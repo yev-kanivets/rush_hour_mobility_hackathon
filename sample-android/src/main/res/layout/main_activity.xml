@@ -211,6 +211,15 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="#EF5350"
+            android:text="STOP"
+            android:textColor="@color/white"
+            />
+
       </LinearLayout>
 
     </androidx.cardview.widget.CardView>

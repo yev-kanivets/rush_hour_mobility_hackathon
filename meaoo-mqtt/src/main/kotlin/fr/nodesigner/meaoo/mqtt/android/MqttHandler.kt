@@ -379,4 +379,9 @@ class MqttHandler(context: Context) {
         val topic = "$TOPIC_PREFIX/prod/user/path"
         return publishMessage(topic, message, isRetained, qos, completionListener)
     }
+
+    fun publishAgentStop(isRetained: Boolean = true, qos: QosPolicy = mQosDefault, completionListener: IMqttActionListener): IMqttDeliveryToken? {
+        val topic = "$TOPIC_PREFIX/prod/user/stop"
+        return publishMessage(topic, "", isRetained, qos, completionListener)
+    }
 }

@@ -20,6 +20,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
+import kotlinx.android.synthetic.main.main_activity.btnStop
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvHeader
 import kotlinx.android.synthetic.main.main_activity.tvTargetX
@@ -52,6 +53,16 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         setContentView(R.layout.main_activity)
 
         initRecycler()
+
+        btnStop.setOnClickListener {
+            if (missionExecutor == null) return@setOnClickListener
+            if (missionExecutor?.userStatus == "stopped") {
+                onStopped()
+            } else {
+                Singleton.publishAgentStop()
+            }
+        }
+
         connect()
     }
 

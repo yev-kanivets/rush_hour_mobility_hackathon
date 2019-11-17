@@ -194,4 +194,16 @@ object Singleton {
             }
         })
     }
+
+    fun publishAgentStop() {
+        mHandler?.publishAgentStop(completionListener = object : IMqttActionListener {
+            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                Log.v(TAG, "failure")
+            }
+
+            override fun onSuccess(asyncActionToken: IMqttToken?) {
+                Log.v(TAG, "success : $asyncActionToken")
+            }
+        })
+    }
 }
