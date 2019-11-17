@@ -13,12 +13,27 @@ import fr.nodesigner.meaoo.mqtt.androidsample.MeaoApplication
 import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
-import fr.nodesigner.meaoo.mqtt.androidsample.entity.*
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.CarSituation
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Condition
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import fr.nodesigner.meaoo.mqtt.androidsample.network.vehicle.VehicleClient
-import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_activity.btnStop
+import kotlinx.android.synthetic.main.main_activity.ivAir
+import kotlinx.android.synthetic.main.main_activity.ivWeather
+import kotlinx.android.synthetic.main.main_activity.recyclerView
+import kotlinx.android.synthetic.main.main_activity.tvCarX
+import kotlinx.android.synthetic.main.main_activity.tvCarY
+import kotlinx.android.synthetic.main.main_activity.tvHeader
+import kotlinx.android.synthetic.main.main_activity.tvTargetX
+import kotlinx.android.synthetic.main.main_activity.tvTargetY
+import kotlinx.android.synthetic.main.main_activity.tvTime
+import kotlinx.android.synthetic.main.main_activity.tvUserX
+import kotlinx.android.synthetic.main.main_activity.tvUserY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,6 +48,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
     val TAG = "Olala"
     val MISSION_REQUEST = 42
+    val MAP_REQUEST = 43
 
     private val presenterJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + presenterJob)
@@ -44,8 +60,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        val app = application  as MeaoApplication
-        app.listeners.add(object: MeaoApplication.MessageArrivedCallback {
+        val app = application as MeaoApplication
+        app.listeners.add(object : MeaoApplication.MessageArrivedCallback {
             override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
                 val jsonString = String(mqttMessage.payload)
                 when (topic) {
@@ -87,7 +103,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
             Singleton.publishAgentPath(Path(vehicleType, target))
             adapter.options = listOf()
-            startActivity(Intent(this@MainActivity, MapActivity::class.java))
+            startActivityForResult(Intent(this@MainActivity, MapActivity::class.java), MAP_REQUEST)
         }
         recyclerView.adapter = adapter
     }
@@ -97,9 +113,11 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 MISSION_REQUEST -> presentOptionsToUser()
+                MAP_REQUEST -> onStopped()
             }
         }
     }
+
     private val gson = Gson()
 
     private fun userSituationUpdate(jsonString: String) {
@@ -200,7 +218,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         tvTargetY.text = "y: ${targetPosition.y.format(2)}"
 
         tvHeader.text =
-                "${missionExecutor!!.currentTargetIndex} / ${missionExecutor!!.maxIndex} objectives completed"
+            "${missionExecutor!!.currentTargetIndex} / ${missionExecutor!!.maxIndex} objectives completed"
 
         val request = GraphService.Request(userPosition, targetPosition)
         val getShortestPaths = GetOptionsInteractor()

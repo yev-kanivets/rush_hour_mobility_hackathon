@@ -46,7 +46,7 @@ class MqttHandler(context: Context) {
     /**
      * client ID used to authenticate
      */
-    var mClientId: String = "some client id"
+    var mClientId: String = UUID.randomUUID().toString()
 
     /**
      * username used for authentication

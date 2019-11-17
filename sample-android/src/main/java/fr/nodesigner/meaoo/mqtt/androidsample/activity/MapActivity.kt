@@ -172,6 +172,7 @@ class MapActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity)
         findViewById<Button>(R.id.btnStop).setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         val app = application as MeaoApplication
@@ -191,6 +192,7 @@ class MapActivity : Activity() {
                         val userStatus = Gson().fromJson<UserStatus>(jsonString, UserStatus::class.java)
                         if (userStatus.status == "stopped") {
                             executor.schedule({
+                                setResult(RESULT_OK)
                                 finish()
                             }, 2, TimeUnit.SECONDS)
                         } else {
@@ -299,7 +301,7 @@ class MapActivity : Activity() {
         WebView.setWebContentsDebuggingEnabled(true)
         mWebView = findViewById(R.id.map_view)
         mWebView.settings.javaScriptEnabled = true
-        mWebView.setInitialScale(350)
+        mWebView.setInitialScale(250)
         mWebView.loadUrl("file:///android_asset/map.html")
         /*
         findViewById<Button>(R.id.move200_2000).setOnClickListener {
