@@ -216,8 +216,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     override fun onMissionCompleted() {
         missionExecutor = null
         tvHeader.text = "Mission completed"
-        tvTargetX.text = "x: 0,00"
-        tvTargetY.text = "y: 0,00"
+        tvTargetX.text = "x: 0.00"
+        tvTargetY.text = "y: 0.00"
     }
 
     private fun presentOptionsToUser() {

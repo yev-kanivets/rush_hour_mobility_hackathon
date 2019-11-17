@@ -109,7 +109,7 @@
                   android:id="@+id/tvTargetX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -117,7 +117,7 @@
                   android:id="@+id/tvTargetY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -151,7 +151,7 @@
                   android:id="@+id/tvUserX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -159,7 +159,7 @@
                   android:id="@+id/tvUserY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -193,7 +193,7 @@
                   android:id="@+id/tvCarX"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="x: 0,00"
+                  android:text="x: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
@@ -201,7 +201,7 @@
                   android:id="@+id/tvCarY"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="y: 0,00"
+                  android:text="y: 0.00"
                   android:textAppearance="@style/text_coordinate"
                   />
 
