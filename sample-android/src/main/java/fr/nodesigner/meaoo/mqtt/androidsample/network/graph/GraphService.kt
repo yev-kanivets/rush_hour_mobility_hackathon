@@ -13,6 +13,9 @@ interface GraphService {
     @GET("processed/subway.json")
     suspend fun getSubwayGraph(): Response<Graph>
 
+    @GET("processed/vehicule.json")
+    suspend fun getCarGraph(): Response<Graph>
+
     data class Graph(
         @SerializedName("elements") val elements: Elements
     )

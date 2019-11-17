@@ -31,6 +31,8 @@ object GraphClient {
 
     suspend fun getSubwayGraph() = graphService.getSubwayGraph()
 
+    suspend fun getCarGraph() = graphService.getCarGraph()
+
     suspend fun getShortestPathWalk(request: GraphService.Request) =
         graphService.getShortestPath(Transport.WALK.string, request)
 
