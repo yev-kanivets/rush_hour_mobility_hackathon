@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import fr.nodesigner.meaoo.androidsample.R
+import fr.nodesigner.meaoo.mqtt.androidsample.activity.format
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Option
 import kotlinx.android.synthetic.main.path_view_item.view.ivTransport
+import kotlinx.android.synthetic.main.path_view_item.view.tvTarget
 import kotlinx.android.synthetic.main.path_view_item.view.tvTime
 import kotlinx.android.synthetic.main.path_view_item.view.tvTitle
 import kotlin.math.roundToInt
@@ -56,6 +58,8 @@ class PathAdapter(
 
             holder.ivTransport.setImageDrawable(context.getDrawable(iconRes))
             holder.tvTitle.text = context.getString(title)
+            holder.tvTarget.text =
+                "x: ${option.coordinate.x.format(2)}, y: ${option.coordinate.y.format(2)}"
             holder.tvTime.text = formatTime(option.cost)
         }
     }
@@ -73,6 +77,7 @@ class PathAdapter(
 
         val ivTransport: ImageView = view.ivTransport
         val tvTitle: TextView = view.tvTitle
+        val tvTarget: TextView = view.tvTarget
         val tvTime: TextView = view.tvTime
 
         init {
