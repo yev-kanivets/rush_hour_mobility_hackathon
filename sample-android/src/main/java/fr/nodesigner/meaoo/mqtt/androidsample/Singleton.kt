@@ -180,6 +180,7 @@ object Singleton {
             subscribe(TOPIC.USER_MISSION_DEV.path, mQosDefault, null)
             subscribe(TOPIC.USER_STATUS.path, mQosDefault, null)
             subscribe(TOPIC.OBJECTIVE_REACHED.path, mQosDefault, null)
+            subscribe(TOPIC.CAR_SITUATION.path, mQosDefault, null)
         }
     }
 

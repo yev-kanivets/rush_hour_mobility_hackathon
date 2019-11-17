@@ -14,14 +14,18 @@ import fr.nodesigner.meaoo.mqtt.android.model.Path
 import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.CarSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
 import fr.nodesigner.meaoo.mqtt.androidsample.network.api.ApiClient
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
+import fr.nodesigner.meaoo.mqtt.androidsample.network.vehicle.VehicleClient
 import kotlinx.android.synthetic.main.main_activity.btnStop
 import kotlinx.android.synthetic.main.main_activity.recyclerView
+import kotlinx.android.synthetic.main.main_activity.tvCarX
+import kotlinx.android.synthetic.main.main_activity.tvCarY
 import kotlinx.android.synthetic.main.main_activity.tvHeader
 import kotlinx.android.synthetic.main.main_activity.tvTargetX
 import kotlinx.android.synthetic.main.main_activity.tvTargetY
@@ -35,6 +39,8 @@ import kotlinx.coroutines.launch
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
+
+var carSituation: CarSituation? = null
 
 class MainActivity : Activity(), MissionExecutor.Listener {
 
@@ -160,6 +166,12 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun userMissionUpdate(jsonString: String) {
         val mission = gson.fromJson<Mission>(jsonString, Mission::class.java)
         uiScope.launch {
+            carSituation = VehicleClient.getLastVehicleSituation()?.attitude
+            carSituation?.let {
+                tvCarX.text = "x: ${it.position.x.format(2)}"
+                tvCarY.text = "y: ${it.position.y.format(2)}"
+            }
+
             val userSituation = ApiClient.getLastUserSituation().body()!!
             missionExecutor = MissionExecutor(userSituation, mission, this@MainActivity)
             drawUserSituation(userSituation)
