@@ -3,9 +3,9 @@ package fr.nodesigner.meaoo.mqtt.androidsample.network.graph
 import fr.nodesigner.meaoo.mqtt.android.model.Coordinate
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Option
 
-class GetSubwayOptionInteractor {
+const val EPS = 0.05
 
-    val EPS = 0.05
+class GetSubwayOptionInteractor {
 
     suspend fun execute(request: GraphService.Request): Option {
         val subwayGraph = GraphClient.getSubwayGraph().body()!!

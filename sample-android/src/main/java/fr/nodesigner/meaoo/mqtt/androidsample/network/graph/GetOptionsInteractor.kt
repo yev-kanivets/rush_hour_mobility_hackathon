@@ -7,14 +7,11 @@ import kotlin.math.sqrt
 class GetOptionsInteractor {
 
     suspend fun execute(request: GraphService.Request): List<Option> {
-        val list = listOfNotNull(
-            GraphClient.getShortestPathCar(request).body()
-        )
-
         return listOfNotNull(
             getWalkOption(request),
             getBikeOption(request),
-            GetSubwayOptionInteractor().execute(request)
+            GetSubwayOptionInteractor().execute(request),
+            GetCarOptionInteractor().execute(request)
         )
     }
 
