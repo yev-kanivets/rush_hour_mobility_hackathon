@@ -22,6 +22,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvPosition
+import kotlinx.android.synthetic.main.main_activity.tvTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -136,6 +137,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     }
 
     private fun drawUserSituation(userSituation: UserSituation) {
+        tvTime.text = "MEAOOTIME: ${formatTime(userSituation.totalCost)}"
         tvPosition.text = "x: ${userSituation.position.x}, y: ${userSituation.position.y}"
     }
 
@@ -183,6 +185,20 @@ class MainActivity : Activity(), MissionExecutor.Listener {
 
         uiScope.launch {
             adapter.options = getShortestPaths.execute(request)
+        }
+    }
+
+    private fun formatTime(time: Double): String {
+        var minutes = time.toInt()
+        var hours = minutes / 60
+        minutes %= 60
+        val days = hours / 24
+        hours %= 24
+
+        return if (days > 0) {
+            "$days:${if (hours < 10) "0" else ""}$hours:${if (minutes < 10) "0" else ""}$minutes"
+        } else {
+            "${if (hours < 10) "0" else ""}$hours:${if (minutes < 10) "0" else ""}$minutes"
         }
     }
 }

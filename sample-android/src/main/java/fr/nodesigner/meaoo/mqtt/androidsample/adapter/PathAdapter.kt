@@ -65,7 +65,7 @@ class PathAdapter(
         val hours = minutes / 60
         minutes %= 60
 
-        return "$hours:$minutes"
+        return "${if (hours < 10) "0" else ""}$hours:${if (minutes < 10) "0" else ""}$minutes"
     }
 
     inner class ViewHolder(view: View, itemClickListener: (Option) -> Unit) :
