@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <WebView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/move200_2000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 200 / 2000" />
+
+            <Button
+                android:id="@+id/move12800_2000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 12800 / 2000" />
+
+            <Button
+                android:id="@+id/move21800_3800"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 21800 / 3800" />
+
+            <Button
+                android:id="@+id/move9200_200"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 9200 / 200" />
+
+            <Button
+                android:id="@+id/move21800_200"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 21800 / 200" />
+
+            <Button
+                android:id="@+id/move7400_5600"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 7400 / 5600" />
+
+            <Button
+                android:id="@+id/move5600_2000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="move to 5600 / 2000" />
+
+            <Button
+                android:id="@+id/set_destination_marker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set destination marker" />
+
+            <Button
+                android:id="@+id/set_car_marker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set car marker" />
+
+            <Button
+                android:id="@+id/set_road_close_car"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set road close for car" />
+
+            <Button
+                android:id="@+id/set_road_close_pedestrian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set road close for pedestrian" />
+
+            <Button
+                android:id="@+id/set_road_close_bike"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set road close for bike" />
+
+            <Button
+                android:id="@+id/set_road_slowdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set road close for slowdown" />
+
+            <Button
+                android:id="@+id/set_metro_issue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set metro issue" />
+            <Button
+                android:id="@+id/set_roadmap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="set roadmap" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
