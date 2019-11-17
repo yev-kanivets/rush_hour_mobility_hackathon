@@ -110,7 +110,7 @@ class MqttHandler(context: Context) {
 
     init {
         this.mClientCb = object : MqttCallback {
-            override fun connectionLost(cause: Throwable) {
+            override fun connectionLost(cause: Throwable?) {
                 connected = false
                 for (i in mMessageCallbacksList.indices) {
                     mMessageCallbacksList[i].connectionLost(cause)
