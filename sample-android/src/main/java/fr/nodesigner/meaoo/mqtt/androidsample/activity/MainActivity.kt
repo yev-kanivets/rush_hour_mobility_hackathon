@@ -251,6 +251,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         tvHeader.text = "Mission completed"
         tvTargetX.text = "x: 0.00"
         tvTargetY.text = "y: 0.00"
+        startActivity(Intent(this, MissionCompleteActivity::class.java))
     }
 
     private fun presentOptionsToUser() {

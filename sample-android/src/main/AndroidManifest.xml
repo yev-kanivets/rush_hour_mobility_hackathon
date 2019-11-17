@@ -27,6 +27,11 @@
         android:screenOrientation="portrait"
         android:theme="@style/AppBaseTheme" />
 
+    <activity
+        android:name="fr.nodesigner.meaoo.mqtt.androidsample.activity.MissionCompleteActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppBaseTheme" />
+
   </application>
 
 </manifest>
