@@ -79,12 +79,12 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun connect() {
         Singleton.setInternalCb(object : IMessageCallback {
 
-            override fun connectionLost(cause: Throwable) {
+            override fun connectionLost(cause: Throwable?) {
                 var errorMessage = "connectionLost"
-                if (cause.message != null) {
+                if (cause?.message != null) {
                     errorMessage = cause.message!!
                 }
-                cause.printStackTrace()
+                cause?.printStackTrace()
                 Log.v(TAG, "connectionLost $errorMessage")
             }
 
@@ -111,9 +111,9 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                 Singleton.subscribeToAllTopics()
             }
 
-            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable) {
+            override fun onConnectionFailure(token: IMqttToken, throwable: Throwable?) {
                 var errorMessage = "connection error"
-                if (throwable.message != null) {
+                if (throwable?.message != null) {
                     errorMessage = throwable.message!!
                 }
                 Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()
@@ -123,7 +123,7 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                 Log.v(TAG, "onDisconnectionSuccess")
             }
 
-            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable) {
+            override fun onDisconnectionFailure(token: IMqttToken, throwable: Throwable?) {
                 Log.v(TAG, "onDisconnectionFailure")
             }
         })
