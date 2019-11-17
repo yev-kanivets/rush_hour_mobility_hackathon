@@ -34,9 +34,24 @@ interface GraphService {
         @Body body: Request
     ): Response<Result>
 
+    @POST("road_graph/shortest_path/car")
+    suspend fun getShortestPathCar(@Body body: CarRequest): Response<Result>
+
     data class Request(
         @SerializedName("departure") val departure: Coordinate,
         @SerializedName("arrival") val arrival: Coordinate
+    )
+
+    data class CarRequest(
+        @SerializedName("departure") val departure: Coordinate,
+        @SerializedName("arrival") val arrival: Coordinate,
+        @SerializedName("vehicles") val vehicles: List<Vehicle>
+    )
+
+    data class Vehicle(
+        @SerializedName("x") val x: Double,
+        @SerializedName("y") val y: Double,
+        @SerializedName("id") val id: String = "id"
     )
 
     data class Result(

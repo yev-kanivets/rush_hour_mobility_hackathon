@@ -42,6 +42,6 @@ object GraphClient {
     suspend fun getShortestPathBike(request: GraphService.Request) =
         graphService.getShortestPath(Transport.BIKE.string, request)
 
-    suspend fun getShortestPathCar(request: GraphService.Request) =
-        graphService.getShortestPath(Transport.CAR.string, request)
+    suspend fun getShortestPathCar(request: GraphService.CarRequest) =
+        graphService.getShortestPathCar(request)
 }
