@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body >
+<canvas id="canvas" style='margin-right:20px;margin-left:20px;'>
+    Your browser does not support the HTML5 canvas tag.
+</canvas>
+<script>
+
+const increment = 10;
+
+var markerType = "marker"; //can be marker or circle
+
+coordinateYMap = {
+    "5600" : 40,
+    "3800" : 220,
+    "2000" : 400,
+    "1100": 488,
+    "200" : 579
+};
+
+/*
+5600 => 100%
+200  => 0%
+300  => 5.55%
+
+(x / 54)  * -539 = y
+
+
+579 - (x / 54)*5.39 = y
+
+579 - (200 / 54)*5.39 = y
+
+
+40  => 100
+579 => 0
+    => 5.55%
+*/
+
+function move(x, y) {
+    update({
+        x: x,
+        y: y
+    });
+}
+
+var startNode = {
+    x: 21800,
+    y: 200
+};
+
+var startCoordinate = {
+    x: 1038,
+    y: 579 //y: 40  y: 220 y: 400
+};
+
+var endCoordinate = {
+    x: 17,
+    y: 200
+};
+
+var Marker = function () {
+    this.Sprite = new Image();
+    this.Sprite.src = "http://maps.google.com/mapfiles/kml/paddle/blu-circle.png"
+    this.Width = 50;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+
+
+var CarMarker = function(){
+	this.Sprite =  new Image();
+    this.Sprite.src = "http://maps.google.com/mapfiles/ms/micons/cabs.png"
+    this.Width = 45;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+
+var DestinationMarker = function(){
+	this.Sprite =  new Image();
+    this.Sprite.src = "http://maps.google.com/mapfiles/kml/paddle/red-circle.png"
+    this.Width = 45;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+
+var RoadClosedForCarMarker = function(){
+	this.Sprite =  new Image();
+    this.Sprite.src = "car.png"
+    this.Width = 45;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+var RoadClosedForWalkMarker = function(){
+	this.Sprite =  new Image();
+    this.Sprite.src = "pedestrian.png"
+    this.Width = 45;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+var RoadClosedForBikeMarker = function(){
+	this.Sprite =  new Image();
+    this.Sprite.src = "bike.png"
+    this.Width = 45;
+    this.Height = 45;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+
+
+var markerPosition = 0;
+var ctx;
+var image;
+var c;
+
+window.onload = function() {
+    c = document.getElementById("canvas");
+    ctx = c.getContext("2d");
+    image = new Image();
+    image.onload = function () {
+        c.width = image.width;
+        c.height = image.height;
+        ctx.drawImage(image, 0, 0);
+        /*
+        markerPosition = {
+            x: calculateX(startNode.x),
+            y: calculateY(startNode.y)
+        };
+        setMarker(image, startNode, 20);
+        */
+    };
+    image.src = 'map.png';
+    /*
+    for(i = 0; i < vehicleNode.length; i++) {
+        var button = document.createElement("button");
+        button.addEventListener("click", function(event){
+            console.log(event.target.coordinate);
+            update(event.target.coordinate);
+        });
+        button.innerHTML = vehicleNode[i].x + "|" + vehicleNode[i].y;
+        button.className = "btn btn-outline-success";
+        button.coordinate = vehicleNode[i]
+        var buttonDiv = document.getElementById("buttons-vehicle");
+        buttonDiv.appendChild(button);
+    }
+    for(i = 0; i < nodeBike.length; i++) {
+        var button = document.createElement("button");
+        button.addEventListener("click", function(event){
+            console.log(event.target.coordinate);
+            update(event.target.coordinate);
+        });
+        button.innerHTML = nodeBike[i].x + "|" + nodeBike[i].y;
+        button.className = "btn btn-outline-success";
+        button.coordinate = nodeBike[i]
+        var buttonDiv = document.getElementById("buttons-bike");
+        buttonDiv.appendChild(button);
+    }
+    for(i = 0; i < walkNode.length; i++) {
+        var button = document.createElement("button");
+        button.addEventListener("click", function(event){
+            console.log(event.target.coordinate);
+            update(event.target.coordinate);
+        });
+        button.innerHTML = walkNode[i].x + "|" + walkNode[i].y;
+        button.className = "btn btn-outline-success";
+        button.coordinate = walkNode[i]
+        var buttonDiv = document.getElementById("buttons-walk");
+        buttonDiv.appendChild(button);
+    }
+    for(i = 0; i < subwayNode.length; i++) {
+        var button = document.createElement("button");
+        button.addEventListener("click", function(event){
+            console.log(event.target.coordinate);
+            update(event.target.coordinate);
+        });
+        button.innerHTML = subwayNode[i].x + "|" + subwayNode[i].y;
+        button.className = "btn btn-outline-success";
+        button.coordinate = subwayNode[i]
+        var buttonDiv = document.getElementById("buttons-subway");
+        buttonDiv.appendChild(button);
+    }
+    */
+}
+
+function update(startNode){
+    ctx.clearRect(0, 0, c.width, c.height);
+    setMarker(image, startNode);
+}
+
+function setMarker(image, startNode) {
+    ctx.drawImage(image, 0, 0);
+    ctx.beginPath();
+    markerPosition = {
+        x: calculateX(startNode.x),
+        y: calculateY(startNode.y)
+    };
+    if (markerType == "marker") {
+	    var marker = new Marker();
+		marker.XPos = markerPosition.x - (marker.Width / 2);
+		marker.YPos = markerPosition.y - marker.Height;
+		ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	} else if (markerType == "circle") {
+		ctx.arc(markerPosition.x, markerPosition.y, 20, 0, 2 * Math.PI, false);
+	    ctx.fillStyle = '#42aaf5';
+	    ctx.fill();
+	    ctx.lineWidth = 12;
+	    ctx.strokeStyle = 'white';
+	    ctx.stroke();
+	    ctx.lineWidth = 2;
+	    ctx.strokeStyle = '#e1e1e1';
+	    ctx.stroke();
+	}
+    /*
+    markerPosition.y = markerPosition.y - 20;
+    console.log(markerPosition);
+    console.log(endCoordinate);
+    if (markerPosition.y > endCoordinate.y){
+        //setTimeout(update, 250);
+    }
+    */
+}
+
+function setCarMarker(x, y) {
+	var marker = new CarMarker();
+	marker.XPos = calculateX(x) - (marker.Width / 2);
+	marker.YPos = calculateY(y) - marker.Height;
+	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+}
+
+function setRoadClosedForCarMarker(x, y) {
+	var marker = new RoadClosedForCarMarker();
+	marker.XPos = calculateX(x) - (marker.Width / 2);
+	marker.YPos = calculateY(y) - marker.Height;
+	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+}
+
+function setRoadClosedForBikeMarker(x, y) {
+	var marker = new RoadClosedForBikeMarker();
+	marker.XPos = calculateX(x) - (marker.Width / 2);
+	marker.YPos = calculateY(y) - marker.Height;
+	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+}
+
+function setRoadClosedForPedestrianMarker(x, y) {
+	var marker = new RoadClosedForWalkMarker();
+	marker.XPos = calculateX(x) - (marker.Width / 2);
+	marker.YPos = calculateY(y) - marker.Height;
+	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+}
+
+function setDestinationMarker(x, y){
+	var marker = new DestinationMarker();
+	marker.XPos = calculateX(x) - (marker.Width / 2);
+	marker.YPos = calculateY(y) - marker.Height;
+	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+}
+
+function clearAll(){
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.drawImage(image, 0, 0);
+}
+/*
+setCarMarker({
+	x: 12800,
+	y: 2000
+});
+setRoadClosedForCarMarker({
+	x: 14000,
+	y: 2000
+});
+setDestinationMarker({
+	x: 18000,
+	y: 2000
+});
+*/
+/*
+coordinates = [{
+	x: 200,
+	y: 2000
+},{
+	x: 200,
+	y: 3800
+},{
+	x: 2000,
+	y: 3800
+},{
+	x: 2000,
+	y: 5600
+},{
+	x: 10000,
+	y: 5600
+},{
+	x: 10000,
+	y: 1600
+},{
+	x: 2000,
+	y: 1600
+}];*/
+/*
+drawRoadMap(coordinates, '#507FF4');
+
+close({
+    "id":"edge_10",
+    "locations": {
+        "from":{"x":0.2,"y":0.8},
+        "to":{"x":0.2,"y":1.8}
+    },
+    "state":"close"
+},"road");
+close({
+    "id":"edge_10",
+    "locations": {
+        "from":{"x":1.2,"y":0.8},
+    	"to":{"x":1.2,"y":1.8}
+    },
+    "state":"close"
+},"slowdown");
+close({
+    "id":"edge_10",
+    "locations": {
+        "from":{"x":10.0,"y":5.6},
+    	"to":{"x":1.2,"y":1.8}
+    },
+    "state":"close"
+},"metro");
+*/
+
+/**
+{
+    "id":"edge_10",
+    "locations": {
+        "from":{"x":0.2,"y":0.8},
+        "to":{"x":0.2,"y":1.8}
+    },
+    "state":"close"
+}*/
+function close(x1, y1, x2, y2, type) {
+    var color = '#FF0000';
+    switch (type){
+        case "road":
+            color = '#FF0000';
+            break;
+        case "slowdown":
+            color = '#FF8C00';
+            break;
+        case "metro":
+            color = '#FF0000';
+            break;
+    }
+    drawRoadMap([[x1,y1],[x2, y2]], color);
+}
+
+function drawRoadMap(coordinates, color){
+	var previous = coordinates[0]
+	for (var i = 1; i < coordinates.length;i++){
+		//equation d'une droite y = ax + b
+		console.log(i);
+		current = coordinates[i];
+		console.log(previous);
+		console.log(current);
+		if ((current[0] - previous[0]) !== 0){
+			var a = (current[1] - previous[1]) / (current[0] - previous[0]);
+			var b = current[1] - a*current[0];
+			console.log(previous[0], " et ", current[0]);
+			console.log(a, " et ", b);
+			//look for some points on that direction
+			if (previous[0] < current[0]) {
+				for (var j = previous[0]; j < current[0]; j+=increment){
+					console.log("y=",a*j+b, " x= ", j, " for ", calculateX(j), " and ", calculateX(a*j+b));
+					ctx.beginPath();
+					ctx.arc(calculateX(j), calculateY(a*j+b), 6, 0, 2 * Math.PI, false);
+				    ctx.fillStyle = color;
+				    ctx.fill();
+				}
+			} else {
+				for (var j = current[0]; j < previous[0]; j+=increment){
+					console.log("y=",a*j+b, " x= ", j, " for ", calculateX(j), " and ", calculateX(a*j+b));
+					ctx.beginPath();
+					ctx.arc(calculateX(j), calculateY(a*j+b), 6, 0, 2 * Math.PI, false);
+				    ctx.fillStyle = color;
+				    ctx.fill();
+				}
+			}
+		} else {
+			if (previous[1] < current[1]){
+				for (var k = previous[1]; k < current[1]; k+=increment){
+					console.log("y=",k, " x= ", current[0], " for ", calculateX(current[0]), " and ", calculateX(k));
+					ctx.beginPath();
+					ctx.arc(calculateX(current[0]), calculateY(k), 6, 0, 2 * Math.PI, false);
+				    ctx.fillStyle = color;
+				    ctx.fill();
+				}
+			} else {
+				for (var k = current[1]; k < previous[1]; k+=increment){
+					console.log("y=",k, " x= ", current[0], " for ", calculateX(current[0]), " and ", calculateX(k));
+					ctx.beginPath();
+					ctx.arc(calculateX(current[0]), calculateY(k), 6, 0, 2 * Math.PI, false);
+				    ctx.fillStyle = color;
+				    ctx.fill();
+				}
+			}
+		}
+		previous = current;
+	}
+}
+
+function calculateX(x){
+	//return x/12.3
+	return 17.5* (x/216);
+}
+
+function calculateY(y){
+	return 585 - (y / 54)*5.23;
+}
+</script>
+</body>
+</html>
