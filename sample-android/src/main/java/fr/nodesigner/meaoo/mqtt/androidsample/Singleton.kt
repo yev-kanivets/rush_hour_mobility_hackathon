@@ -181,6 +181,13 @@ object Singleton {
             subscribe(TOPIC.USER_STATUS.path, mQosDefault, null)
             subscribe(TOPIC.OBJECTIVE_REACHED.path, mQosDefault, null)
             subscribe(TOPIC.CAR_SITUATION.path, mQosDefault, null)
+            subscribe(TOPIC.ROADS_STATUS.path, mQosDefault, null)
+            subscribe(TOPIC.LINE_STATE.path, mQosDefault, null)
+            subscribe(TOPIC.TRAFFIC_CONDITIONS.path, mQosDefault, null)
+
+
+
+
         }
     }
 

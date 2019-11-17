@@ -20,7 +20,8 @@ class WebviewUtils {
                 y1: Int,
                 x2: Int = 0,
                 y2: Int = 0,
-                type: String = ""
+                type: String = "",
+                color: String = ""
         ) {
 
             val stringBuilder = StringBuilder()
@@ -37,6 +38,10 @@ class WebviewUtils {
             stringBuilder.append(",")
             stringBuilder.append("'")
             stringBuilder.append(type)
+            stringBuilder.append("'")
+            stringBuilder.append(",")
+            stringBuilder.append("'")
+            stringBuilder.append(color)
             stringBuilder.append("'")
             stringBuilder.append(")}catch(error){console.error(error.message);}")
             val call = stringBuilder.toString()
@@ -109,9 +114,10 @@ class WebviewUtils {
                 y1: Int,
                 x2: Int,
                 y2: Int,
-                type: String
+                type: String,
+                color: String = ""
         ) {
-            webView.post { callJavaScript(webView, methodName, x1, y1, x2, y2, type) }
+            webView.post { callJavaScript(webView, methodName, x1, y1, x2, y2, type, color) }
         }
 
         fun callOnWebviewThread(

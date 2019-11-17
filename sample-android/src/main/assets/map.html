@@ -231,37 +231,47 @@ function setMarker(image, startNode) {
 
 function setCarMarker(x, y) {
 	var marker = new CarMarker();
-	marker.XPos = calculateX(x) - (marker.Width / 2);
-	marker.YPos = calculateY(y) - marker.Height;
-	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	marker.Sprite.onload = function(){
+		marker.XPos = calculateX(x) - (marker.Width / 2);
+	    marker.YPos = calculateY(y) - marker.Height;
+	    ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	}
 }
 
 function setRoadClosedForCarMarker(x, y) {
 	var marker = new RoadClosedForCarMarker();
-	marker.XPos = calculateX(x) - (marker.Width / 2);
-	marker.YPos = calculateY(y) - marker.Height;
-	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	marker.Sprite.onload = function(){
+		marker.XPos = calculateX(x) - (marker.Width / 2);
+	    marker.YPos = calculateY(y) - marker.Height;
+	    ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	}
 }
 
 function setRoadClosedForBikeMarker(x, y) {
 	var marker = new RoadClosedForBikeMarker();
-	marker.XPos = calculateX(x) - (marker.Width / 2);
-	marker.YPos = calculateY(y) - marker.Height;
-	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	marker.Sprite.onload = function(){
+		marker.XPos = calculateX(x) - (marker.Width / 2);
+	    marker.YPos = calculateY(y) - marker.Height;
+	    ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	}
 }
 
 function setRoadClosedForPedestrianMarker(x, y) {
 	var marker = new RoadClosedForWalkMarker();
-	marker.XPos = calculateX(x) - (marker.Width / 2);
-	marker.YPos = calculateY(y) - marker.Height;
-	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	marker.Sprite.onload = function(){
+		marker.XPos = calculateX(x) - (marker.Width / 2);
+	    marker.YPos = calculateY(y) - marker.Height;
+	    ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	}
 }
 
 function setDestinationMarker(x, y){
 	var marker = new DestinationMarker();
-	marker.XPos = calculateX(x) - (marker.Width / 2);
-	marker.YPos = calculateY(y) - marker.Height;
-	ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+	marker.Sprite.onload = function(){
+        marker.XPos = calculateX(x) - (marker.Width / 2);
+	    marker.YPos = calculateY(y) - marker.Height;
+	    ctx.drawImage(marker.Sprite, marker.XPos, marker.YPos, marker.Width, marker.Height);
+    };
 }
 
 function clearAll(){
@@ -343,14 +353,14 @@ close({
     },
     "state":"close"
 }*/
-function close(x1, y1, x2, y2, type) {
+function close(x1, y1, x2, y2, type, color) {
     var color = '#FF0000';
     switch (type){
         case "road":
             color = '#FF0000';
             break;
         case "slowdown":
-            color = '#FF8C00';
+            color = color;
             break;
         case "metro":
             color = '#FF0000';

@@ -35,4 +35,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
+    implementation "com.github.kittinunf.fuel:fuel-gson:$fuelGsonVersion"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
+
 }

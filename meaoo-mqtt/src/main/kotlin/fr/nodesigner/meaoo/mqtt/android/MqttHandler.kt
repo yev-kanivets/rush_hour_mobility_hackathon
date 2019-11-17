@@ -19,7 +19,10 @@ enum class TOPIC(val path: String) {
     USER_MISSION_DEV("$TOPIC_PREFIX/myteam/mission"),
     USER_STATUS("$TOPIC_PREFIX/prod/user/status"),
     OBJECTIVE_REACHED("$TOPIC_PREFIX/prod/user/objective-reached"),
-    CAR_SITUATION("$TOPIC_PREFIX/prod/{id}/status/attitude")
+    CAR_SITUATION("$TOPIC_PREFIX/prod/0000000000000000/status/attitude"),
+    ROADS_STATUS("$TOPIC_PREFIX/prod/environment/change/roads_status"),
+    LINE_STATE("$TOPIC_PREFIX/prod/environment/change/lines_state"),
+    TRAFFIC_CONDITIONS("$TOPIC_PREFIX/prod/environment/change/traffic_conditions")
 }
 
 /**
@@ -41,7 +44,7 @@ class MqttHandler(context: Context) {
     /**
      * client ID used to authenticate
      */
-    var mClientId: String =  UUID.randomUUID().toString()
+    var mClientId: String = "some client id"
 
     /**
      * username used for authentication
@@ -321,14 +324,15 @@ class MqttHandler(context: Context) {
 
     /**
      * CONTEXT​ SUBSCRIPTION
-        Solace bus address
-        [TOPIC_PREFIX]/prod/context/change/weather
-        [TOPIC_PREFIX]/prod/context/change/air
+    Solace bus address
+    [TOPIC_PREFIX]/prod/context/change/weather
+    [TOPIC_PREFIX]/prod/context/change/air
      */
     fun subscribeContextWeather() {
         val topic = TOPIC_PREFIX + "/prod/context/change/weather"
         subscribe(topic, mQosDefault, null)
     }
+
     fun subscribeContextAir() {
         val topic = TOPIC_PREFIX + "/prod/context/change/air"
         subscribe(topic, mQosDefault, null)
@@ -336,24 +340,27 @@ class MqttHandler(context: Context) {
 
     /**
      * CITY SUBSCRIPTION
-        Solace bus address
-        [TOPIC_PREFIX]/prod/environment/change/roads_status​
-        [TOPIC_PREFIX]/prod/environment/change/lines_state​
-        [TOPIC_PREFIX]/prod/environment/change/traffic_conditions​
-        [TOPIC_PREFIX]/prod/environment/change/breakdown
+    Solace bus address
+    [TOPIC_PREFIX]/prod/environment/change/roads_status​
+    [TOPIC_PREFIX]/prod/environment/change/lines_state​
+    [TOPIC_PREFIX]/prod/environment/change/traffic_conditions​
+    [TOPIC_PREFIX]/prod/environment/change/breakdown
      */
     fun subscribeCityRoadStatus() {
         val topic = TOPIC_PREFIX + "/prod/environment/change/roads_status"
         subscribe(topic, mQosDefault, null)
     }
+
     fun subscribeCityLinesState() {
         val topic = TOPIC_PREFIX + "/prod/environment/change/lines_state"
         subscribe(topic, mQosDefault, null)
     }
+
     fun subscribeCityTrafficConditions() {
         val topic = TOPIC_PREFIX + "/prod/environment/change/traffic_conditions"
         subscribe(topic, mQosDefault, null)
     }
+
     fun subscribeCityBreakdown() {
         val topic = TOPIC_PREFIX + "/prod/environment/change/breakdown"
         subscribe(topic, mQosDefault, null)
@@ -361,8 +368,8 @@ class MqttHandler(context: Context) {
 
     /**
      * VEHICLE SUBSCRIPTION
-        Solace bus address
-        [TOPIC_PREFIX]/prod/{id}/status/attitude​
+    Solace bus address
+    [TOPIC_PREFIX]/prod/{id}/status/attitude​
      */
     fun subscribeVehicleAttitude(id: String) {
         val topic = TOPIC_PREFIX + "/prod/$id/status/attitude"
@@ -371,9 +378,9 @@ class MqttHandler(context: Context) {
 
     /**
      * AGENT​ COMMAND
-        Solace bus address
-        [TOPIC_PREFIX]/prod/user/path
-        [TOPIC_PREFIX]/prod/user/path-to-target (*)
+    Solace bus address
+    [TOPIC_PREFIX]/prod/user/path
+    [TOPIC_PREFIX]/prod/user/path-to-target (*)
      */
     fun publishAgentPath(message: String, isRetained: Boolean = true, qos: QosPolicy = mQosDefault, completionListener: IMqttActionListener): IMqttDeliveryToken? {
         val topic = "$TOPIC_PREFIX/prod/user/path"
