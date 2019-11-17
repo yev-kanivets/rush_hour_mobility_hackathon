@@ -15,6 +15,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.MissionExecutor
 import fr.nodesigner.meaoo.mqtt.androidsample.Singleton
 import fr.nodesigner.meaoo.mqtt.androidsample.adapter.PathAdapter
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.CarSituation
+import fr.nodesigner.meaoo.mqtt.androidsample.entity.Condition
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Mission
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserSituation
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.UserStatus
@@ -23,6 +24,8 @@ import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GetOptionsInteractor
 import fr.nodesigner.meaoo.mqtt.androidsample.network.graph.GraphService
 import fr.nodesigner.meaoo.mqtt.androidsample.network.vehicle.VehicleClient
 import kotlinx.android.synthetic.main.main_activity.btnStop
+import kotlinx.android.synthetic.main.main_activity.ivAir
+import kotlinx.android.synthetic.main.main_activity.ivWeather
 import kotlinx.android.synthetic.main.main_activity.recyclerView
 import kotlinx.android.synthetic.main.main_activity.tvCarX
 import kotlinx.android.synthetic.main.main_activity.tvCarY
@@ -41,6 +44,8 @@ import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
 var carSituation: CarSituation? = null
+var airCondition = "normal"
+var weatherCondition = "normal"
 
 class MainActivity : Activity(), MissionExecutor.Listener {
 
@@ -115,6 +120,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
                     }
                     TOPIC.USER_STATUS.path -> userStatusUpdate(jsonString)
                     TOPIC.OBJECTIVE_REACHED.path -> objectiveReached()
+                    TOPIC.CHANGE_WEATHER.path -> changeWeather(jsonString)
+                    TOPIC.CHANGE_AIR.path -> changeAir(jsonString)
                     else -> {
                         if (topic.endsWith("attitude")) {
                             carSituationUpdate(jsonString)
@@ -203,6 +210,32 @@ class MainActivity : Activity(), MissionExecutor.Listener {
     private fun carSituationUpdate(jsonString: String) {
         carSituation = gson.fromJson<CarSituation>(jsonString, CarSituation::class.java)
         drawCarSituation()
+    }
+
+    private fun changeAir(jsonString: String) {
+        val condition = gson.fromJson<Condition>(jsonString, Condition::class.java)
+        airCondition = condition.condition
+
+        val resId = when (airCondition) {
+            "normal" -> R.drawable.ic_low_pollution
+            "pollution peak" -> R.drawable.ic_high_pollution
+            else -> R.drawable.ic_low_pollution
+        }
+        ivAir.setImageDrawable(getDrawable(resId))
+    }
+
+    private fun changeWeather(jsonString: String) {
+        val condition = gson.fromJson<Condition>(jsonString, Condition::class.java)
+        weatherCondition = condition.condition
+
+        val resId = when (weatherCondition) {
+            "normal" -> R.drawable.ic_normal
+            "snow" -> R.drawable.ic_snow
+            "rain" -> R.drawable.ic_rain
+            "heat wave" -> R.drawable.ic_heat
+            else -> R.drawable.ic_normal
+        }
+        ivWeather.setImageDrawable(getDrawable(resId))
     }
 
     override fun onStopped() {
