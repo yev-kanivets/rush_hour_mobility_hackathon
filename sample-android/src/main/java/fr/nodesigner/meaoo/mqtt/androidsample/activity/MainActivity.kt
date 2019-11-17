@@ -224,7 +224,8 @@ class MainActivity : Activity(), MissionExecutor.Listener {
         val getShortestPaths = GetOptionsInteractor()
 
         uiScope.launch {
-            adapter.options = getShortestPaths.execute(request)
+            val options = getShortestPaths.execute(request)
+            if (missionExecutor != null) adapter.options = options
         }
     }
 

@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 interface GraphService {
@@ -79,11 +80,11 @@ fun List<List<Double>>.target(initialTarget: Coordinate): Coordinate {
         val isVertical = abs(a.y - b.y) > abs(a.x - b.x)
         return if (isVertical) {
             val delta = if (a.y < b.y) 0.5 else -0.5
-            val newY = min(6.0, b.y + delta)
+            val newY = max(0.0, min(6.0, b.y + delta))
             Coordinate(b.x, newY)
         } else {
             val delta = if (a.x < b.x) 0.5 else -0.5
-            val newX = min(22.0, b.x + delta)
+            val newX = max(0.0, min(22.0, b.x + delta))
             Coordinate(newX, b.y)
         }
     }
