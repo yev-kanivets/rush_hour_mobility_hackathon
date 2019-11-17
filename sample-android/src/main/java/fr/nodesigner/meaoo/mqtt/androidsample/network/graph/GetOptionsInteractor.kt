@@ -9,14 +9,21 @@ class GetOptionsInteractor {
 
     suspend fun execute(request: GraphService.Request): List<Option> {
         val list = listOfNotNull(
-            GraphClient.getShortestPathWalk(request).body(),
             GraphClient.getShortestPathBike(request).body(),
             GraphClient.getShortestPathCar(request).body()
         )
 
-        return listOf(
+        return listOfNotNull(
+            getWalkOption(request),
             GetSubwayOptionInteractor().execute(request)
         )
+    }
+
+    private suspend fun getWalkOption(request: GraphService.Request): Option? {
+        val pathWalk = GraphClient.getShortestPathWalk(request).body() ?: return null
+        val path = pathWalk.cars.first()
+        val target = path.paths.map { point -> Coordinate(point[0], point[1]) }.last()
+        return Option.WalkToTarget(target, path.pathLength)
     }
 
     private fun mapTransport(input: GraphService.ResultItem): Transport {

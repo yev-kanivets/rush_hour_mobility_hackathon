@@ -11,6 +11,7 @@ import fr.nodesigner.meaoo.androidsample.R
 import fr.nodesigner.meaoo.mqtt.androidsample.entity.Option
 import kotlinx.android.synthetic.main.path_view_item.view.ivTransport
 import kotlinx.android.synthetic.main.path_view_item.view.tvTime
+import kotlinx.android.synthetic.main.path_view_item.view.tvTitle
 import kotlin.math.roundToInt
 
 class PathAdapter(
@@ -41,10 +42,20 @@ class PathAdapter(
                 is Option.BikeToTarget -> R.drawable.ic_bike
                 is Option.CallTaxi -> R.drawable.ic_car
                 is Option.UseTaxiToTarget -> R.drawable.ic_car
-                is Option.UseMetroToTarget -> R.drawable.ic_subway
+                is Option.UseSubwayToTarget -> R.drawable.ic_subway
+            }
+
+            val title = when (option) {
+                is Option.WalkToTarget -> R.string.walk_to_target
+                is Option.WalkToSubway -> R.string.walk_to_subway
+                is Option.BikeToTarget -> R.string.bike_to_target
+                is Option.CallTaxi -> R.string.call_taxi
+                is Option.UseTaxiToTarget -> R.string.use_taxi_to_target
+                is Option.UseSubwayToTarget -> R.string.use_subway_to_target
             }
 
             holder.ivTransport.setImageDrawable(context.getDrawable(iconRes))
+            holder.tvTitle.text = context.getString(title)
             holder.tvTime.text = formatTime(option.cost)
         }
     }
@@ -61,6 +72,7 @@ class PathAdapter(
         RecyclerView.ViewHolder(view) {
 
         val ivTransport: ImageView = view.ivTransport
+        val tvTitle: TextView = view.tvTitle
         val tvTime: TextView = view.tvTime
 
         init {

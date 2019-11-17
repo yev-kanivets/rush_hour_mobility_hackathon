@@ -33,7 +33,7 @@ sealed class Option(
         override val cost: Double
     ) : Option(coordinate, cost, Transport.CAR)
 
-    data class UseMetroToTarget(
+    data class UseSubwayToTarget(
         override val coordinate: Coordinate,
         override val cost: Double
     ) : Option(coordinate, cost, Transport.SUBWAY)

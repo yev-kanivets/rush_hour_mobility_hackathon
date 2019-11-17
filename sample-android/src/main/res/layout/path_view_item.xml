@@ -29,6 +29,20 @@
         />
 
     <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:maxLines="1"
+        android:textColor="@color/cod_gray"
+        android:textSize="14sp"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintStart_toEndOf="@id/ivTransport"
+        card_view:layout_constraintTop_toTopOf="parent"
+        tools:text="00:42"
+        />
+
+    <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

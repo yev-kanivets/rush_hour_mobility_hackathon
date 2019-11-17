@@ -5,7 +5,7 @@ import fr.nodesigner.meaoo.mqtt.androidsample.entity.Option
 
 class GetSubwayOptionInteractor {
 
-    val EPS = 0.01
+    val EPS = 0.05
 
     suspend fun execute(request: GraphService.Request): Option {
         val subwayGraph = GraphClient.getSubwayGraph().body()!!
@@ -23,7 +23,7 @@ class GetSubwayOptionInteractor {
             } else {
                 val path = subwayShortestPath.cars.first()
                 val target = path.paths.map { point -> Coordinate(point[0], point[1]) }.last()
-                Option.UseMetroToTarget(target, path.pathLength)
+                Option.UseSubwayToTarget(target, path.pathLength)
             }
         } else {
             closestMetro(request.departure, subwayNodes)

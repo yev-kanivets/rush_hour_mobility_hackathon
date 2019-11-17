@@ -1,13 +1,19 @@
 <resources>
-    <string name="app_name">Meaoo Sample app</string>
-    <string name="button_go_name">Go</string>
-    <string name="mission_title">Mission</string>
-    <string name="mission_bonjour">Bonjour</string>
-    <string name="mission_bonjour_subtitle">vous allez à</string>
-    <string name="mission_button1_text">X: 0.0, Y: 0.0</string>
-    <string name="mission_button2_text">X: 1.0, Y: 1.0</string>
-    <string name="mission_button3_text">X: 2.0, Y: 2.0</string>
-    <string name="title_activity_main2">Main2Activity</string>
+  <string name="app_name">Meaoo Sample app</string>
+  <string name="button_go_name">Go</string>
+  <string name="mission_title">Mission</string>
+  <string name="mission_bonjour">Bonjour</string>
+  <string name="mission_bonjour_subtitle">vous allez à</string>
+  <string name="mission_button1_text">X: 0.0, Y: 0.0</string>
+  <string name="mission_button2_text">X: 1.0, Y: 1.0</string>
+  <string name="mission_button3_text">X: 2.0, Y: 2.0</string>
+  <string name="title_activity_main2">Main2Activity</string>
   <string name="go">Go</string>
   <string name="visit_the_following_points">Visit the following points \n to complete the mission</string>
+  <string name="walk_to_target">Walk to target</string>
+  <string name="walk_to_subway">Walk to subway</string>
+  <string name="bike_to_target">Bike to target</string>
+  <string name="call_taxi">Call taxi</string>
+  <string name="use_taxi_to_target">Use taxi to target</string>
+  <string name="use_subway_to_target">Use subway to target</string>
 </resources>
